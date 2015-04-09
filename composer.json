@@ -1,0 +1,19 @@
+{
+  "name": "aoepeople/aoe_avatax",
+  "description": "Avalara AvaTax Integration",
+  "authors": [
+    {
+      "name": "Lee Saferite",
+      "email": "lee.saferite@aoe.com"
+    }
+  ],
+  "type": "magento-module",
+  "require": {
+    "php": ">=5.4",
+    "magento-hackathon/magento-composer-installer": "*",
+    "aoepeople/aoe_layout": "~2"
+  },
+  "require-dev": {
+    "ecomdev/ecomdev_phpunit": "*"
+  }
+}

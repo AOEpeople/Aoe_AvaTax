@@ -1,0 +1,4 @@
+app/etc/modules/Aoe_AvaTax.xml                              app/etc/modules/Aoe_AvaTax.xml
+app/code/community/Aoe/AvaTax                               app/code/community/Aoe/AvaTax
+app/design/adminhtml/default/default/layout/Aoe_AvaTax.xml  app/design/adminhtml/default/default/layout/Aoe_AvaTax.xml
+app/locale/en_US/Aoe_AvaTax.csv                             app/locale/en_US/Aoe_AvaTax.csv

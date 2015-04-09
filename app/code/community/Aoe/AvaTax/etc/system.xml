@@ -1,0 +1,132 @@
+<?xml version="1.0"?>
+<config>
+    <sections>
+        <tax>
+            <tab>sales</tab>
+            <groups>
+                <aoe_avatax translate="label comment">
+                    <label>AvaTax</label>
+                    <sort_order>0</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <active translate="label">
+                            <label>Active</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </active>
+                        <mode translate="label">
+                            <label>Mode</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>Aoe_AvaTax/Config_Source_Mode</source_model>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </mode>
+                        <production_url translate="label">
+                            <label>Production API URL</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>100</sort_order>
+                            <show_in_default>1</show_in_default>
+                        </production_url>
+                        <sandbox_url translate="label">
+                            <label>Sandbox API URL</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>110</sort_order>
+                            <show_in_default>1</show_in_default>
+                        </sandbox_url>
+                        <account translate="label">
+                            <label>Account Number</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>200</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </account>
+                        <license translate="label">
+                            <label>License Key</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>300</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </license>
+                        <company_code translate="label comment">
+                            <label>Company Code</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>400</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </company_code>
+                        <log_active translate="label">
+                            <label>Request Logging</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>1000</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </log_active>
+                        <log_success_lifetime translate="label comment">
+                            <label>Request Log Success Entry Lifetime</label>
+                            <comment>Days before entries are purged. This will default to 60 days.</comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>1010</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </log_success_lifetime>
+                        <log_failure_lifetime translate="label comment">
+                            <label>Request Log Success Entry Lifetime</label>
+                            <comment>Days before entries are purged. This will default to 60 days.</comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>1010</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </log_failure_lifetime>
+                        <invoice_item_ref1_attribute translate="label">
+                            <label>Invoice Item - Reference Code #1</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>2010</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </invoice_item_ref1_attribute>
+                        <invoice_item_ref2_attribute translate="label">
+                            <label>Invoice Item - Reference Code #2</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>2020</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </invoice_item_ref2_attribute>
+                        <creditmemo_item_ref1_attribute translate="label">
+                            <label>Creditmemo Item - Reference Code #1</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>3010</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </creditmemo_item_ref1_attribute>
+                        <creditmemo_item_ref2_attribute translate="label">
+                            <label>Creditmemo Item - Reference Code #2</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>3020</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </creditmemo_item_ref2_attribute>
+                    </fields>
+                </aoe_avatax>
+            </groups>
+        </tax>
+    </sections>
+</config>
