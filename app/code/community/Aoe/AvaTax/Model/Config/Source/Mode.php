@@ -10,7 +10,7 @@ class Aoe_AvaTax_Model_Config_Source_Mode
     {
         $helper = Mage::helper('Aoe_AvaTax/Data');
         return array(
-            array('value' => 'development', 'label' => $helper->__('Development')),
+            array('value' => 'sandbox', 'label' => $helper->__('Sandbox')),
             array('value' => 'production', 'label' => $helper->__('Production')),
         );
     }
@@ -19,7 +19,7 @@ class Aoe_AvaTax_Model_Config_Source_Mode
     {
         $helper = Mage::helper('Aoe_AvaTax/Data');
         return array(
-            'development' => $helper->__('Development'),
+            'sandbox' => $helper->__('Sandbox'),
             'production'  => $helper->__('Production'),
         );
     }
