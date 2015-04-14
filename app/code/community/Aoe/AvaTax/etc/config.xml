@@ -127,6 +127,9 @@
     </adminhtml>
     <default>
         <tax>
+            <classes>
+                <shipping_tax_class>4</shipping_tax_class>
+            </classes>
             <aoe_avatax>
                 <mode>sandbox</mode>
                 <debug>1</debug>
