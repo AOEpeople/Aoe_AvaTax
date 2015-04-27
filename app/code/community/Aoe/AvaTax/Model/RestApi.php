@@ -208,8 +208,8 @@ class Aoe_AvaTax_Model_RestApi extends Aoe_AvaTax_Model_Api
                 "TaxCode"         => $this->limit($this->getHelper()->getProductTaxCode($item->getProduct()), 25),
                 "Discounted"      => ($item->getBaseDiscountAmount() > 0.0),
                 "TaxIncluded"     => $taxConfig->priceIncludesTax($store),
-                "Ref1"            => $this->getHelper()->getQuoteItemRef1($item, $store),
-                "Ref2"            => $this->getHelper()->getQuoteItemRef2($item, $store),
+                "Ref1"            => $this->limit($this->getHelper()->getQuoteItemRef1($item, $store), 250),
+                "Ref2"            => $this->limit($this->getHelper()->getQuoteItemRef2($item, $store), 250),
             );
         }
 
@@ -220,7 +220,7 @@ class Aoe_AvaTax_Model_RestApi extends Aoe_AvaTax_Model_Api
             "Amount"          => $address->getBaseShippingAmount(),
             "OriginCode"      => "ORIGIN",
             "DestinationCode" => "DESTINATION",
-            "Description"     => "Shipping: " . $address->getShippingMethod(),
+            "Description"     => $this->limit("Shipping: " . $address->getShippingMethod(), 255),
             "TaxCode"         => $this->limit($this->getHelper()->getShippingTaxCode($store), 25),
             "Discounted"      => ($address->getBaseShippingDiscountAmount() > 0.0),
             "TaxIncluded"     => $taxConfig->shippingPriceIncludesTax($store),
@@ -287,7 +287,7 @@ class Aoe_AvaTax_Model_RestApi extends Aoe_AvaTax_Model_Api
             "Amount"          => $store->roundPrice($shippingPriceIncludesTax ? $invoice->getBaseShippingInclTax() : $invoice->getBaseShippingAmount()),
             "OriginCode"      => "ORIGIN",
             "DestinationCode" => "DESTINATION",
-            "Description"     => "Shipping: " . $order->getShippingMethod(),
+            "Description"     => $this->limit("Shipping: " . $order->getShippingMethod(), 255),
             "TaxCode"         => $this->limit($this->getHelper()->getShippingTaxCode($store), 25),
             "Discounted"      => ($invoice->getBaseShippingDiscountAmount() > 0.0),
             "TaxIncluded"     => $shippingPriceIncludesTax,
@@ -355,7 +355,7 @@ class Aoe_AvaTax_Model_RestApi extends Aoe_AvaTax_Model_Api
             "Amount"          => -$store->roundPrice($shippingPriceIncludesTax ? $creditmemo->getBaseShippingInclTax() : $creditmemo->getBaseShippingAmount()),
             "OriginCode"      => "ORIGIN",
             "DestinationCode" => "DESTINATION",
-            "Description"     => "Shipping: " . $order->getShippingMethod(),
+            "Description"     => $this->limit("Shipping: " . $order->getShippingMethod(), 255),
             "TaxCode"         => $this->limit($this->getHelper()->getShippingTaxCode($store), 25),
             "Discounted"      => ($creditmemo->getBaseShippingDiscountAmount() > 0.0),
             "TaxIncluded"     => $shippingPriceIncludesTax,
