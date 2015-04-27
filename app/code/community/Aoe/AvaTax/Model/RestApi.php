@@ -224,6 +224,7 @@ class Aoe_AvaTax_Model_RestApi extends Aoe_AvaTax_Model_Api
             "TaxCode"         => $this->limit($this->getHelper()->getShippingTaxCode($store), 25),
             "Discounted"      => ($address->getBaseShippingDiscountAmount() > 0.0),
             "TaxIncluded"     => $taxConfig->shippingPriceIncludesTax($store),
+            "Ref1"            => $this->limit($address->getShippingMethod(), 250),
         );
 
         // TODO: Handle giftwrapping
@@ -291,6 +292,7 @@ class Aoe_AvaTax_Model_RestApi extends Aoe_AvaTax_Model_Api
             "TaxCode"         => $this->limit($this->getHelper()->getShippingTaxCode($store), 25),
             "Discounted"      => ($invoice->getBaseShippingDiscountAmount() > 0.0),
             "TaxIncluded"     => $shippingPriceIncludesTax,
+            "Ref1"            => $this->limit($order->getShippingMethod(), 250),
         );
 
         // TODO: Handle giftwrapping
@@ -359,6 +361,7 @@ class Aoe_AvaTax_Model_RestApi extends Aoe_AvaTax_Model_Api
             "TaxCode"         => $this->limit($this->getHelper()->getShippingTaxCode($store), 25),
             "Discounted"      => ($creditmemo->getBaseShippingDiscountAmount() > 0.0),
             "TaxIncluded"     => $shippingPriceIncludesTax,
+            "Ref1"            => $this->limit($order->getShippingMethod(), 250),
         );
 
         // TODO: Handle giftwrapping
