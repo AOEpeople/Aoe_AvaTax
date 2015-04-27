@@ -14,7 +14,12 @@ class Aoe_AvaTax_Model_Sales_Invoice extends Mage_Sales_Model_Order_Invoice
         /** @var Aoe_AvaTax_Helper_Data $helper */
         $helper = Mage::helper('Aoe_AvaTax/Data');
         if ($helper->isActive($this->getStore()) && $this->getBaseTaxAmount() > 0.0) {
+            /* @var $entityType Mage_Eav_Model_Entity_Type */
+            $entityType = Mage::getModel('eav/entity_type')->loadByCode('invoice');
+            $this->setIncrementId($entityType->fetchNewIncrementId($this->getStoreId()));
+
             $this->setCommitTaxDocuments(true);
+
             $this->setSubtotal(0);
             $this->setBaseSubtotal(0);
             $this->setShippingAmount(0);
