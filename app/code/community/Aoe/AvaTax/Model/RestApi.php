@@ -213,20 +213,18 @@ class Aoe_AvaTax_Model_RestApi extends Aoe_AvaTax_Model_Api
             );
         }
 
-        if ($address->getBaseShippingAmount() > 0.0) {
-            $request['Lines'][] = array(
-                "LineNo"          => "SHIPPING",
-                "ItemCode"        => "SHIPPING",
-                "Qty"             => "1",
-                "Amount"          => $address->getBaseShippingAmount(),
-                "OriginCode"      => "ORIGIN",
-                "DestinationCode" => "DESTINATION",
-                "Description"     => "Shipping: " . $address->getShippingMethod(),
-                "TaxCode"         => $this->limit($this->getHelper()->getShippingTaxCode($store), 25),
-                "Discounted"      => ($address->getBaseShippingDiscountAmount() > 0.0),
-                "TaxIncluded"     => $taxConfig->shippingPriceIncludesTax($store),
-            );
-        }
+        $request['Lines'][] = array(
+            "LineNo"          => "SHIPPING",
+            "ItemCode"        => "SHIPPING",
+            "Qty"             => "1",
+            "Amount"          => $address->getBaseShippingAmount(),
+            "OriginCode"      => "ORIGIN",
+            "DestinationCode" => "DESTINATION",
+            "Description"     => "Shipping: " . $address->getShippingMethod(),
+            "TaxCode"         => $this->limit($this->getHelper()->getShippingTaxCode($store), 25),
+            "Discounted"      => ($address->getBaseShippingDiscountAmount() > 0.0),
+            "TaxIncluded"     => $taxConfig->shippingPriceIncludesTax($store),
+        );
 
         // TODO: Handle giftwrapping
 
@@ -282,20 +280,18 @@ class Aoe_AvaTax_Model_RestApi extends Aoe_AvaTax_Model_Api
         }
 
         $shippingPriceIncludesTax = $taxConfig->shippingPriceIncludesTax($store);
-        if (!$this->getHelper()->isShippingInvoiced($invoice) && $invoice->getBaseShippingAmount() > 0.0) {
-            $request['Lines'][] = array(
-                "LineNo"          => "SHIPPING",
-                "ItemCode"        => "SHIPPING",
-                "Qty"             => "1",
-                "Amount"          => $store->roundPrice($shippingPriceIncludesTax ? $invoice->getBaseShippingInclTax() : $invoice->getBaseShippingAmount()),
-                "OriginCode"      => "ORIGIN",
-                "DestinationCode" => "DESTINATION",
-                "Description"     => "Shipping: " . $order->getShippingMethod(),
-                "TaxCode"         => $this->limit($this->getHelper()->getShippingTaxCode($store), 25),
-                "Discounted"      => ($invoice->getBaseShippingDiscountAmount() > 0.0),
-                "TaxIncluded"     => $shippingPriceIncludesTax,
-            );
-        }
+        $request['Lines'][] = array(
+            "LineNo"          => "SHIPPING",
+            "ItemCode"        => "SHIPPING",
+            "Qty"             => "1",
+            "Amount"          => $store->roundPrice($shippingPriceIncludesTax ? $invoice->getBaseShippingInclTax() : $invoice->getBaseShippingAmount()),
+            "OriginCode"      => "ORIGIN",
+            "DestinationCode" => "DESTINATION",
+            "Description"     => "Shipping: " . $order->getShippingMethod(),
+            "TaxCode"         => $this->limit($this->getHelper()->getShippingTaxCode($store), 25),
+            "Discounted"      => ($invoice->getBaseShippingDiscountAmount() > 0.0),
+            "TaxIncluded"     => $shippingPriceIncludesTax,
+        );
 
         // TODO: Handle giftwrapping
 
@@ -352,20 +348,18 @@ class Aoe_AvaTax_Model_RestApi extends Aoe_AvaTax_Model_Api
         }
 
         $shippingPriceIncludesTax = $taxConfig->shippingPriceIncludesTax($store);
-        if (!$this->getHelper()->isShippingCredited($creditmemo) && $creditmemo->getBaseShippingAmount() > 0.0) {
-            $request['Lines'][] = array(
-                "LineNo"          => "SHIPPING",
-                "ItemCode"        => "SHIPPING",
-                "Qty"             => "1",
-                "Amount"          => -$store->roundPrice($shippingPriceIncludesTax ? $creditmemo->getBaseShippingInclTax() : $creditmemo->getBaseShippingAmount()),
-                "OriginCode"      => "ORIGIN",
-                "DestinationCode" => "DESTINATION",
-                "Description"     => "Shipping: " . $order->getShippingMethod(),
-                "TaxCode"         => $this->limit($this->getHelper()->getShippingTaxCode($store), 25),
-                "Discounted"      => ($creditmemo->getBaseShippingDiscountAmount() > 0.0),
-                "TaxIncluded"     => $shippingPriceIncludesTax,
-            );
-        }
+        $request['Lines'][] = array(
+            "LineNo"          => "SHIPPING",
+            "ItemCode"        => "SHIPPING",
+            "Qty"             => "1",
+            "Amount"          => -$store->roundPrice($shippingPriceIncludesTax ? $creditmemo->getBaseShippingInclTax() : $creditmemo->getBaseShippingAmount()),
+            "OriginCode"      => "ORIGIN",
+            "DestinationCode" => "DESTINATION",
+            "Description"     => "Shipping: " . $order->getShippingMethod(),
+            "TaxCode"         => $this->limit($this->getHelper()->getShippingTaxCode($store), 25),
+            "Discounted"      => ($creditmemo->getBaseShippingDiscountAmount() > 0.0),
+            "TaxIncluded"     => $shippingPriceIncludesTax,
+        );
 
         // TODO: Handle giftwrapping
 
