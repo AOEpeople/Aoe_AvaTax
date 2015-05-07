@@ -172,6 +172,9 @@ class Aoe_AvaTax_Model_RestApi extends Aoe_AvaTax_Model_Api
         $quote = $address->getQuote();
         $store = $quote->getStore();
 
+        /** @var bool $hideDiscountAmount */
+        $hideDiscountAmount = Mage::helper('tax')->applyTaxAfterDiscount($store);
+
         $timestamp = ($quote->getCreatedAt() ? Varien_Date::toTimestamp($quote->getCreatedAt()) : now());
         $date = new Zend_Date($timestamp);
         $request = array(
@@ -183,7 +186,7 @@ class Aoe_AvaTax_Model_RestApi extends Aoe_AvaTax_Model_Api
             'DocDate'      => $date->toString('yyyy-MM-dd'),
             'CustomerCode' => ($quote->getCustomerId() ? 'C-' . $quote->getCustomerId() : 'Q-' . $quote->getId()),
             'CurrencyCode' => $this->limit($quote->getBaseCurrencyCode(), 3),
-            'Discount'     => $store->roundPrice($address->getBaseDiscountAmount()),
+            'Discount'     => ($hideDiscountAmount ? 0.0 : $store->roundPrice($address->getBaseDiscountAmount())),
             'Addresses'    => array(),
             'Lines'        => array(),
         );
@@ -240,6 +243,9 @@ class Aoe_AvaTax_Model_RestApi extends Aoe_AvaTax_Model_Api
         $order = $invoice->getOrder();
         $store = $invoice->getStore();
 
+        /** @var bool $hideDiscountAmount */
+        $hideDiscountAmount = Mage::helper('tax')->applyTaxAfterDiscount($store);
+
         $request = array(
             'Client'        => 'Aoe_AvaTax',
             'CompanyCode'   => $this->limit($this->getHelper()->getConfig('company_code', $store), 25),
@@ -251,7 +257,7 @@ class Aoe_AvaTax_Model_RestApi extends Aoe_AvaTax_Model_Api
             'DocDate'       => $invoice->getCreatedAtDate()->toString('yyyy-MM-dd'),
             'CustomerCode'  => ($order->getCustomerId() ? 'C-' . $order->getCustomerId() : 'O-' . $order->getIncrementId()),
             'CurrencyCode'  => $this->limit($invoice->getBaseCurrencyCode(), 3),
-            'Discount'      => $store->roundPrice($invoice->getBaseDiscountAmount()),
+            'Discount'      => ($hideDiscountAmount ? 0.0 : $store->roundPrice($invoice->getBaseDiscountAmount())),
             'Addresses'     => array(),
             'Lines'         => array(),
         );
@@ -311,6 +317,9 @@ class Aoe_AvaTax_Model_RestApi extends Aoe_AvaTax_Model_Api
         $store = $creditmemo->getStore();
         $invoice = $creditmemo->getInvoice();
 
+        /** @var bool $hideDiscountAmount */
+        $hideDiscountAmount = Mage::helper('tax')->applyTaxAfterDiscount($store);
+
         $request = array(
             'Client'        => 'Aoe_AvaTax',
             'CompanyCode'   => $this->limit($this->getHelper()->getConfig('company_code', $store), 25),
@@ -322,7 +331,7 @@ class Aoe_AvaTax_Model_RestApi extends Aoe_AvaTax_Model_Api
             'DocDate'       => $creditmemo->getCreatedAtDate()->toString('yyyy-MM-dd'),
             'CustomerCode'  => ($order->getCustomerId() ? 'C-' . $order->getCustomerId() : 'O-' . $order->getIncrementId()),
             'CurrencyCode'  => $this->limit($creditmemo->getBaseCurrencyCode(), 3),
-            'Discount'      => -$store->roundPrice($creditmemo->getBaseDiscountAmount()),
+            'Discount'      => ($hideDiscountAmount ? 0.0 : -$store->roundPrice($creditmemo->getBaseDiscountAmount())),
             'Addresses'     => array(),
             'Lines'         => array(),
         );
