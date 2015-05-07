@@ -346,7 +346,7 @@ class Aoe_AvaTax_Model_RestApi extends Aoe_AvaTax_Model_Api
                 "DestinationCode" => "DESTINATION",
                 "Description"     => $this->limit($item->getDescription(), 255),
                 "TaxCode"         => $this->limit($this->getHelper()->getProductTaxCode($item->getOrderItem()->getProduct()), 25),
-                "Discounted"      => ($item->getDiscountAmount() > 0.0),
+                "Discounted"      => ($item->getBaseDiscountAmount() > 0.0),
                 "TaxIncluded"     => $itemPriceIncludesTax,
                 "Ref1"            => $this->limit($this->getHelper()->getCreditmemoItemRef1($item, $store), 250),
                 "Ref2"            => $this->limit($this->getHelper()->getCreditmemoItemRef2($item, $store), 250),
