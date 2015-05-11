@@ -50,7 +50,11 @@ class Aoe_AvaTax_Model_RestApi extends Aoe_AvaTax_Model_Api
 
         $request = $this->prepareRequest($request);
 
-        return $this->call($invoice->getStore(), '1.0/tax/cancel', $request);
+        $result = $this->call($invoice->getStore(), '1.0/tax/cancel', $request);
+
+        $result = (isset($result['CancelTaxResult']) ? $result['CancelTaxResult'] : $result);
+
+        return $result;
     }
 
     public function callVoidTaxForCreditmemo(Mage_Sales_Model_Order_Creditmemo $creditmemo)
@@ -58,14 +62,18 @@ class Aoe_AvaTax_Model_RestApi extends Aoe_AvaTax_Model_Api
         $request = array(
             'Client'      => 'Aoe_AvaTax',
             'CompanyCode' => $this->limit($this->getHelper()->getConfig('company_code', $creditmemo->getStore()), 25),
-            'DocType'     => 'SalesInvoice',
+            'DocType'     => 'ReturnInvoice',
             'DocCode'     => $this->limit('C-' . $creditmemo->getIncrementId(), 50),
             'CancelCode'  => 'DocVoided',
         );
 
         $request = $this->prepareRequest($request);
 
-        return $this->call($creditmemo->getStore(), '1.0/tax/cancel', $request);
+        $result = $this->call($creditmemo->getStore(), '1.0/tax/cancel', $request);
+
+        $result = (isset($result['CancelTaxResult']) ? $result['CancelTaxResult'] : $result);
+
+        return $result;
     }
 
     protected function call(Mage_Core_Model_Store $store, $path, array $request)
