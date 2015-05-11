@@ -37,7 +37,7 @@
             </Aoe_AvaTax_Resource>
             <sales>
                 <rewrite>
-                    <order_invoice>Aoe_AvaTax_Model_Sales_Invoice</order_invoice>
+                    <!-- Needed to fix a missing event in the core code -->
                     <order_creditmemo>Aoe_AvaTax_Model_Sales_Creditmemo</order_creditmemo>
                 </rewrite>
             </sales>
@@ -88,6 +88,24 @@
                 </totals>
             </order_creditmemo>
         </sales>
+        <events>
+            <sales_order_invoice_register>
+                <observers>
+                    <Aoe_AvaTax>
+                        <class>Aoe_AvaTax/Observer</class>
+                        <method>registerInvoice</method>
+                    </Aoe_AvaTax>
+                </observers>
+            </sales_order_invoice_register>
+            <sales_order_creditmemo_register>
+                <observers>
+                    <Aoe_AvaTax>
+                        <class>Aoe_AvaTax/Observer</class>
+                        <method>registerCreditmemo</method>
+                    </Aoe_AvaTax>
+                </observers>
+            </sales_order_creditmemo_register>
+        </events>
     </global>
     <frontend>
         <layout>

@@ -30,6 +30,70 @@ class Aoe_AvaTax_Model_Observer
         }
     }
 
+    public function registerInvoice(Varien_Event_Observer $observer)
+    {
+        /** @var Mage_Sales_Model_Order_Invoice $record */
+        $record = $observer->getEvent()->getData('invoice');
+        if (!$record instanceof Mage_Sales_Model_Order_Invoice) {
+            return;
+        }
+
+        if (!$this->getHelper()->isActive($record->getStore())) {
+            return;
+        }
+
+        $incrementId = $record->getIncrementId();
+        if (empty($incrementId)) {
+            /* @var $entityType Mage_Eav_Model_Entity_Type */
+            $entityType = Mage::getModel('eav/entity_type')->loadByCode('invoice');
+            $record->setIncrementId($entityType->fetchNewIncrementId($record->getStoreId()));
+        }
+
+        /** @var Aoe_AvaTax_Model_Api $api */
+        $api = Mage::getModel('Aoe_AvaTax/RestApi');
+        $result = $api->callGetTaxForInvoice($record, true);
+        if ($result['ResultCode'] !== 'Success') {
+            throw new Aoe_AvaTax_Exception($result['ResultCode'], $result['Messages']);
+        }
+
+        // NB: Ignoring the returned tax data on purpose
+
+        $record->setAvataxDocument($result['DocCode']);
+        $record->getOrder()->addStatusHistoryComment(sprintf('SalesInvoice sent to AvaTax (%s)', $result['DocCode']));
+    }
+
+    public function registerCreditmemo(Varien_Event_Observer $observer)
+    {
+        /** @var Mage_Sales_Model_Order_Creditmemo $record */
+        $record = $observer->getEvent()->getData('creditmemo');
+        if (!$record instanceof Mage_Sales_Model_Order_Creditmemo) {
+            return;
+        }
+
+        if (!$this->getHelper()->isActive($record->getStore())) {
+            return;
+        }
+
+        $incrementId = $record->getIncrementId();
+        if (empty($incrementId)) {
+            /* @var $entityType Mage_Eav_Model_Entity_Type */
+            $entityType = Mage::getModel('eav/entity_type')->loadByCode('creditmemo');
+            $record->setIncrementId($entityType->fetchNewIncrementId($record->getStoreId()));
+        }
+
+        /** @var Aoe_AvaTax_Model_Api $api */
+        $api = Mage::getModel('Aoe_AvaTax/RestApi');
+        $result = $api->callGetTaxForCreditmemo($record, true);
+        if ($result['ResultCode'] !== 'Success') {
+            throw new Aoe_AvaTax_Exception($result['ResultCode'], $result['Messages']);
+        }
+
+        // NB: Ignoring the returned tax data on purpose
+
+        $record->setAvataxDocument($result['DocCode']);
+        $record->getOrder()->addStatusHistoryComment(sprintf('RefundInvoice sent to AvaTax (%s)', $result['DocCode']));
+    }
+
     /**
      * @return Aoe_AvaTax_Helper_Data
      */
