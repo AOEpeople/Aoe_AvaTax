@@ -57,6 +57,25 @@ class Aoe_AvaTax_Model_RestApi extends Aoe_AvaTax_Model_Api
         return $result;
     }
 
+    public function callDeleteTaxForInvoice(Mage_Sales_Model_Order_Invoice $invoice)
+    {
+        $request = array(
+            'Client'      => 'Aoe_AvaTax',
+            'CompanyCode' => $this->limit($this->getHelper()->getConfig('company_code', $invoice->getStore()), 25),
+            'DocType'     => 'SalesInvoice',
+            'DocCode'     => $this->limit('I-' . $invoice->getIncrementId(), 50),
+            'CancelCode'  => 'DocDeleted',
+        );
+
+        $request = $this->prepareRequest($request);
+
+        $result = $this->call($invoice->getStore(), '1.0/tax/cancel', $request);
+
+        $result = (isset($result['CancelTaxResult']) ? $result['CancelTaxResult'] : $result);
+
+        return $result;
+    }
+
     public function callVoidTaxForCreditmemo(Mage_Sales_Model_Order_Creditmemo $creditmemo)
     {
         $request = array(
@@ -65,6 +84,25 @@ class Aoe_AvaTax_Model_RestApi extends Aoe_AvaTax_Model_Api
             'DocType'     => 'ReturnInvoice',
             'DocCode'     => $this->limit('C-' . $creditmemo->getIncrementId(), 50),
             'CancelCode'  => 'DocVoided',
+        );
+
+        $request = $this->prepareRequest($request);
+
+        $result = $this->call($creditmemo->getStore(), '1.0/tax/cancel', $request);
+
+        $result = (isset($result['CancelTaxResult']) ? $result['CancelTaxResult'] : $result);
+
+        return $result;
+    }
+
+    public function callDeleteTaxForCreditmemo(Mage_Sales_Model_Order_Creditmemo $creditmemo)
+    {
+        $request = array(
+            'Client'      => 'Aoe_AvaTax',
+            'CompanyCode' => $this->limit($this->getHelper()->getConfig('company_code', $creditmemo->getStore()), 25),
+            'DocType'     => 'ReturnInvoice',
+            'DocCode'     => $this->limit('C-' . $creditmemo->getIncrementId(), 50),
+            'CancelCode'  => 'DocDeleted',
         );
 
         $request = $this->prepareRequest($request);

@@ -8,9 +8,13 @@ abstract class Aoe_AvaTax_Model_Api
 
     abstract public function callVoidTaxForInvoice(Mage_Sales_Model_Order_Invoice $invoice);
 
+    abstract public function callDeleteTaxForInvoice(Mage_Sales_Model_Order_Invoice $invoice);
+
     abstract public function callGetTaxForCreditmemo(Mage_Sales_Model_Order_Creditmemo $creditmemo, $commit = false);
 
     abstract public function callVoidTaxForCreditmemo(Mage_Sales_Model_Order_Creditmemo $creditmemo);
+
+    abstract public function callDeleteTaxForCreditmemo(Mage_Sales_Model_Order_Creditmemo $creditmemo);
 
     protected function getMode(Mage_Core_Model_Store $store)
     {
