@@ -366,12 +366,18 @@ class Aoe_AvaTax_Model_RestApi extends Aoe_AvaTax_Model_Api
         /** @var bool $hideDiscountAmount */
         $hideDiscountAmount = Mage::helper('tax')->applyTaxAfterDiscount($store);
 
+        if ($invoice) {
+            $referenceCode = ($invoice->getAvataxDocument() ? $invoice->getAvataxDocument() : ('I-' . $invoice->getIncrementId()));
+        } else {
+            $referenceCode = 'O-' . $order->getIncrementId();
+        }
+
         $request = array(
             'Client'        => 'Aoe_AvaTax',
             'CompanyCode'   => $this->limit($this->getHelper()->getConfig('company_code', $store), 25),
             'DocType'       => ($commit ? 'ReturnInvoice' : 'ReturnOrder'),
             'DocCode'       => ($creditmemo->getIncrementId() ? $this->limit('C-' . $creditmemo->getIncrementId(), 50) : null),
-            'ReferenceCode' => (($invoice && $invoice->getAvataxDocument()) ? $invoice->getAvataxDocument() : 'O-' . $order->getIncrementId()),
+            'ReferenceCode' => $referenceCode,
             'Commit'        => $commit,
             'DetailLevel'   => 'Tax',
             'DocDate'       => $creditmemo->getCreatedAtDate()->toString('yyyy-MM-dd'),
