@@ -97,6 +97,14 @@
                     </Aoe_AvaTax>
                 </observers>
             </sales_order_invoice_register>
+            <sales_order_invoice_cancel>
+                <observers>
+                    <Aoe_AvaTax>
+                        <class>Aoe_AvaTax/Observer</class>
+                        <method>voidInvoice</method>
+                    </Aoe_AvaTax>
+                </observers>
+            </sales_order_invoice_cancel>
             <sales_order_creditmemo_register>
                 <observers>
                     <Aoe_AvaTax>

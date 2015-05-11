@@ -62,6 +62,28 @@ class Aoe_AvaTax_Model_Observer
         $record->getOrder()->addStatusHistoryComment(sprintf('SalesInvoice sent to AvaTax (%s)', $result['DocCode']));
     }
 
+    public function voidInvoice(Varien_Event_Observer $observer)
+    {
+        /** @var Mage_Sales_Model_Order_Invoice $record */
+        $record = $observer->getEvent()->getData('invoice');
+        if (!$record instanceof Mage_Sales_Model_Order_Invoice) {
+            return;
+        }
+
+        if (!$this->getHelper()->isActive($record->getStore())) {
+            return;
+        }
+
+        /** @var Aoe_AvaTax_Model_Api $api */
+        $api = Mage::getModel('Aoe_AvaTax/RestApi');
+        $result = $api->callVoidTaxForInvoice($record);
+        if ($result['ResultCode'] !== 'Success') {
+            throw new Aoe_AvaTax_Exception($result['ResultCode'], $result['Messages']);
+        }
+
+        $record->getOrder()->addStatusHistoryComment(sprintf('Voided SalesInvoice sent to AvaTax (%s)', $this->getHelper()->getInvoiceDocCode($record)));
+    }
+
     public function registerCreditmemo(Varien_Event_Observer $observer)
     {
         /** @var Mage_Sales_Model_Order_Creditmemo $record */
