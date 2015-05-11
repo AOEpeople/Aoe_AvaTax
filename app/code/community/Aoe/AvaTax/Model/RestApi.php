@@ -139,7 +139,13 @@ class Aoe_AvaTax_Model_RestApi extends Aoe_AvaTax_Model_Api
 
             $response = $client->request(Zend_Http_Client::POST);
             if ($response->getStatus() >= 500) {
-                Mage::throwException('Invalid response: ' . $response->getStatus());
+                $message = $response->getStatus();
+                $result = json_decode($response->getBody(), true);
+                if (is_array($result)) {
+                    $message .= "\n" . print_r($result, true);
+                }
+
+                Mage::throwException('Invalid response: ' . $message);
             }
 
             $resultBody = $response->getBody();
