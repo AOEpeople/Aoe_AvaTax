@@ -44,7 +44,7 @@ class Aoe_AvaTax_Model_RestApi extends Aoe_AvaTax_Model_Api
             'Client'      => 'Aoe_AvaTax',
             'CompanyCode' => $this->limit($this->getHelper()->getConfig('company_code', $invoice->getStore()), 25),
             'DocType'     => 'SalesInvoice',
-            'DocCode'     => $this->limit('I-' . $invoice->getIncrementId(), 50),
+            'DocCode'     => $this->limit($this->getHelper()->getInvoiceDocCode($invoice), 50),
             'CancelCode'  => 'DocVoided',
         );
 
@@ -63,7 +63,7 @@ class Aoe_AvaTax_Model_RestApi extends Aoe_AvaTax_Model_Api
             'Client'      => 'Aoe_AvaTax',
             'CompanyCode' => $this->limit($this->getHelper()->getConfig('company_code', $invoice->getStore()), 25),
             'DocType'     => 'SalesInvoice',
-            'DocCode'     => $this->limit('I-' . $invoice->getIncrementId(), 50),
+            'DocCode'     => $this->limit($this->getHelper()->getInvoiceDocCode($invoice), 50),
             'CancelCode'  => 'DocDeleted',
         );
 
@@ -82,7 +82,7 @@ class Aoe_AvaTax_Model_RestApi extends Aoe_AvaTax_Model_Api
             'Client'      => 'Aoe_AvaTax',
             'CompanyCode' => $this->limit($this->getHelper()->getConfig('company_code', $creditmemo->getStore()), 25),
             'DocType'     => 'ReturnInvoice',
-            'DocCode'     => $this->limit('C-' . $creditmemo->getIncrementId(), 50),
+            'DocCode'     => $this->limit($this->getHelper()->getCreditmemoDocCode($creditmemo), 50),
             'CancelCode'  => 'DocVoided',
         );
 
@@ -101,7 +101,7 @@ class Aoe_AvaTax_Model_RestApi extends Aoe_AvaTax_Model_Api
             'Client'      => 'Aoe_AvaTax',
             'CompanyCode' => $this->limit($this->getHelper()->getConfig('company_code', $creditmemo->getStore()), 25),
             'DocType'     => 'ReturnInvoice',
-            'DocCode'     => $this->limit('C-' . $creditmemo->getIncrementId(), 50),
+            'DocCode'     => $this->limit($this->getHelper()->getCreditmemoDocCode($creditmemo), 50),
             'CancelCode'  => 'DocDeleted',
         );
 
@@ -236,7 +236,7 @@ class Aoe_AvaTax_Model_RestApi extends Aoe_AvaTax_Model_Api
             'Commit'       => false,
             'DetailLevel'  => 'Tax',
             'DocDate'      => $date->toString('yyyy-MM-dd'),
-            'CustomerCode' => ($quote->getCustomerId() ? 'C-' . $quote->getCustomerId() : 'Q-' . $quote->getId()),
+            'CustomerCode' => $this->getHelper()->getCustomerDocCode($quote->getCustomer()) ?: $this->getHelper()->getQuoteDocCode($quote),
             'CurrencyCode' => $this->limit($quote->getBaseCurrencyCode(), 3),
             'Discount'     => ($hideDiscountAmount ? 0.0 : $store->roundPrice($address->getBaseDiscountAmount())),
             'Addresses'    => array(),
@@ -295,6 +295,9 @@ class Aoe_AvaTax_Model_RestApi extends Aoe_AvaTax_Model_Api
         $order = $invoice->getOrder();
         $store = $invoice->getStore();
 
+        /** @var Mage_Customer_Model_Customer $customer */
+        $customer = Mage::getModel('customer/customer')->load($order->getCustomerId());
+
         /** @var bool $hideDiscountAmount */
         $hideDiscountAmount = Mage::helper('tax')->applyTaxAfterDiscount($store);
 
@@ -302,12 +305,12 @@ class Aoe_AvaTax_Model_RestApi extends Aoe_AvaTax_Model_Api
             'Client'        => 'Aoe_AvaTax',
             'CompanyCode'   => $this->limit($this->getHelper()->getConfig('company_code', $store), 25),
             'DocType'       => ($commit ? 'SalesInvoice' : 'SalesOrder'),
-            'DocCode'       => ($invoice->getIncrementId() ? $this->limit('I-' . $invoice->getIncrementId(), 50) : null),
-            'ReferenceCode' => 'O-' . $order->getIncrementId(),
+            'DocCode'       => $this->limit($this->getHelper()->getInvoiceDocCode($invoice), 50),
+            'ReferenceCode' => $this->getHelper()->getOrderDocCode($order),
             'Commit'        => $commit,
             'DetailLevel'   => 'Tax',
             'DocDate'       => $invoice->getCreatedAtDate()->toString('yyyy-MM-dd'),
-            'CustomerCode'  => ($order->getCustomerId() ? 'C-' . $order->getCustomerId() : 'O-' . $order->getIncrementId()),
+            'CustomerCode'  => $this->getHelper()->getCustomerDocCode($customer) ?: $this->getHelper()->getOrderDocCode($order),
             'CurrencyCode'  => $this->limit($invoice->getBaseCurrencyCode(), 3),
             'Discount'      => ($hideDiscountAmount ? 0.0 : $store->roundPrice($invoice->getBaseDiscountAmount())),
             'Addresses'     => array(),
@@ -369,25 +372,22 @@ class Aoe_AvaTax_Model_RestApi extends Aoe_AvaTax_Model_Api
         $store = $creditmemo->getStore();
         $invoice = $creditmemo->getInvoice();
 
+        /** @var Mage_Customer_Model_Customer $customer */
+        $customer = Mage::getModel('customer/customer')->load($order->getCustomerId());
+
         /** @var bool $hideDiscountAmount */
         $hideDiscountAmount = Mage::helper('tax')->applyTaxAfterDiscount($store);
-
-        if ($invoice) {
-            $referenceCode = ($invoice->getAvataxDocument() ? $invoice->getAvataxDocument() : ('I-' . $invoice->getIncrementId()));
-        } else {
-            $referenceCode = 'O-' . $order->getIncrementId();
-        }
 
         $request = array(
             'Client'        => 'Aoe_AvaTax',
             'CompanyCode'   => $this->limit($this->getHelper()->getConfig('company_code', $store), 25),
             'DocType'       => ($commit ? 'ReturnInvoice' : 'ReturnOrder'),
-            'DocCode'       => ($creditmemo->getIncrementId() ? $this->limit('C-' . $creditmemo->getIncrementId(), 50) : null),
-            'ReferenceCode' => $referenceCode,
+            'DocCode'       => $this->limit($this->getHelper()->getCreditmemoDocCode($creditmemo), 50),
+            'ReferenceCode' => ($invoice ? $this->getHelper()->getInvoiceDocCode($invoice) : $this->getHelper()->getOrderDocCode($order)),
             'Commit'        => $commit,
             'DetailLevel'   => 'Tax',
             'DocDate'       => $creditmemo->getCreatedAtDate()->toString('yyyy-MM-dd'),
-            'CustomerCode'  => ($order->getCustomerId() ? 'C-' . $order->getCustomerId() : 'O-' . $order->getIncrementId()),
+            'CustomerCode'  => $this->getHelper()->getCustomerDocCode($customer) ?: $this->getHelper()->getOrderDocCode($order),
             'CurrencyCode'  => $this->limit($creditmemo->getBaseCurrencyCode(), 3),
             'Discount'      => ($hideDiscountAmount ? 0.0 : -$store->roundPrice($creditmemo->getBaseDiscountAmount())),
             'Addresses'     => array(),

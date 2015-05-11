@@ -3,6 +3,7 @@
 class Aoe_AvaTax_Helper_Data extends Mage_Core_Helper_Abstract
 {
     const CONFIG_PREFIX = 'tax/aoe_avatax';
+    const DOC_CODE_SEPARATOR = '-';
 
     /**
      * @param mixed $store
@@ -146,6 +147,70 @@ class Aoe_AvaTax_Helper_Data extends Mage_Core_Helper_Abstract
             $value = $this->getObjectData($item, $attributeCode);
         }
         return $value;
+    }
+
+    public function getCustomerDocCode(Mage_Customer_Model_Customer $customer)
+    {
+        $prefix = trim($this->getConfig('customer_prefix', $customer->getStore()), self::DOC_CODE_SEPARATOR);
+        $prefix = (empty($prefix) ? 'C' : $prefix) . self::DOC_CODE_SEPARATOR;
+
+        if ($customer->getId()) {
+            return $prefix . $customer->getId();
+        } else {
+            return null;
+        }
+    }
+
+    public function getQuoteDocCode(Mage_Sales_Model_Quote $quote)
+    {
+        $prefix = trim($this->getConfig('quote_prefix', $quote->getStore()), self::DOC_CODE_SEPARATOR);
+        $prefix = (empty($prefix) ? 'Q' : $prefix) . self::DOC_CODE_SEPARATOR;
+
+        if ($quote->getId()) {
+            return $prefix . $quote->getId();
+        } else {
+            return null;
+        }
+    }
+
+    public function getOrderDocCode(Mage_Sales_Model_Order $order)
+    {
+        $prefix = trim($this->getConfig('order_prefix', $order->getStore()), self::DOC_CODE_SEPARATOR);
+        $prefix = (empty($prefix) ? 'O' : $prefix) . self::DOC_CODE_SEPARATOR;
+
+        if ($order->getIncrementId()) {
+            return $prefix . $order->getIncrementId();
+        } else {
+            return null;
+        }
+    }
+
+    public function getInvoiceDocCode(Mage_Sales_Model_Order_Invoice $invoice)
+    {
+        $prefix = trim($this->getConfig('invoice_prefix', $invoice->getStore()), self::DOC_CODE_SEPARATOR);
+        $prefix = (empty($prefix) ? 'I' : $prefix) . self::DOC_CODE_SEPARATOR;
+
+        if ($invoice->getAvataxDocument()) {
+            return $invoice->getAvataxDocument();
+        } elseif ($invoice->getIncrementId()) {
+            return $prefix . $invoice->getIncrementId();
+        } else {
+            return $prefix . $invoice->getOrder()->getIncrementId() . self::DOC_CODE_SEPARATOR . uniqid();
+        }
+    }
+
+    public function getCreditmemoDocCode(Mage_Sales_Model_Order_Creditmemo $creditmemo)
+    {
+        $prefix = trim($this->getConfig('creditmemo_prefix', $creditmemo->getStore()), self::DOC_CODE_SEPARATOR);
+        $prefix = (empty($prefix) ? 'R' : $prefix) . self::DOC_CODE_SEPARATOR;
+
+        if ($creditmemo->getAvataxDocument()) {
+            return $creditmemo->getAvataxDocument();
+        } elseif ($creditmemo->getIncrementId()) {
+            return $prefix . $creditmemo->getIncrementId();
+        } else {
+            return $prefix . $creditmemo->getOrder()->getIncrementId() . self::DOC_CODE_SEPARATOR . uniqid();
+        }
     }
 
     public function getObjectData(Varien_Object $object, $key)
