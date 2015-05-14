@@ -50,7 +50,7 @@ abstract class Aoe_AvaTax_Model_Api
      */
     protected function generateHash(array $data, array $extra = array())
     {
-        return sha1(json_encode($this->recursiveKeySort(array($data, $extra))));
+        return sha1(json_encode(array($data, $extra)));
     }
 
     /**
