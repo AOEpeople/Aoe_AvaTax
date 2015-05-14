@@ -306,7 +306,7 @@ class Aoe_AvaTax_Helper_Data extends Mage_Core_Helper_Abstract
         } elseif ($invoice->getIncrementId()) {
             return $prefix . $invoice->getIncrementId();
         } else {
-            return $prefix . $invoice->getOrder()->getIncrementId() . self::DOC_CODE_SEPARATOR . uniqid();
+            return null;
         }
     }
 
@@ -320,7 +320,7 @@ class Aoe_AvaTax_Helper_Data extends Mage_Core_Helper_Abstract
         } elseif ($creditmemo->getIncrementId()) {
             return $prefix . $creditmemo->getIncrementId();
         } else {
-            return $prefix . $creditmemo->getOrder()->getIncrementId() . self::DOC_CODE_SEPARATOR . uniqid();
+            return null;
         }
     }
 
