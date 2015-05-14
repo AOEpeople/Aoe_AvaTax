@@ -15,6 +15,117 @@ class Aoe_AvaTax_Helper_Data extends Mage_Core_Helper_Abstract
         return $this->getConfigFlag('active', $store);
     }
 
+    /**
+     * Generate and send a SalesInvoice
+     *
+     * @param Aoe_AvaTax_Model_Api           $api
+     * @param Mage_Sales_Model_Order_Invoice $invoice
+     *
+     * @return string
+     * @throws Aoe_AvaTax_Exception
+     * @throws Exception
+     */
+    public function registerInvoice(Aoe_AvaTax_Model_Api $api, Mage_Sales_Model_Order_Invoice $invoice)
+    {
+        if (!$this->isActive($invoice->getStore())) {
+            return null;
+        }
+
+        $incrementId = $invoice->getIncrementId();
+        if (empty($incrementId)) {
+            /* @var $entityType Mage_Eav_Model_Entity_Type */
+            $entityType = Mage::getModel('eav/entity_type')->loadByCode('invoice');
+            $invoice->setIncrementId($entityType->fetchNewIncrementId($invoice->getStoreId()));
+        }
+
+        $result = $api->callGetTaxForInvoice($invoice, true);
+        if ($result['ResultCode'] !== 'Success') {
+            throw new Aoe_AvaTax_Exception($result['ResultCode'], $result['Messages']);
+        }
+
+        // NB: Ignoring the returned tax data on purpose
+
+        $invoice->getResource()->beginTransaction();
+
+        try {
+            $invoice->setAvataxDocument($result['DocCode']);
+            $invoice->save();
+
+            $invoice->getOrder()->addStatusHistoryComment(sprintf('SalesInvoice sent to AvaTax (%s)', $result['DocCode']));
+            $invoice->getOrder()->save();
+
+            $invoice->getResource()->commit();
+        } catch (Exception $e) {
+            $invoice->getResource()->rollBack();
+            throw $e;
+        }
+
+        return $result['DocCode'];
+    }
+
+    public function voidInvoice(Aoe_AvaTax_Model_Api $api, Mage_Sales_Model_Order_Invoice $invoice)
+    {
+        if (!$this->isActive($invoice->getStore())) {
+            return;
+        }
+
+        $result = $api->callVoidTaxForInvoice($invoice);
+        if ($result['ResultCode'] !== 'Success') {
+            throw new Aoe_AvaTax_Exception($result['ResultCode'], $result['Messages']);
+        }
+
+        $invoice->getOrder()->addStatusHistoryComment(sprintf('Voided SalesInvoice sent to AvaTax (%s)', $this->getInvoiceDocCode($invoice)));
+        $invoice->getOrder()->save();
+    }
+
+    /**
+     * Generate and send a RefundInvoice
+     *
+     * @param Aoe_AvaTax_Model_Api              $api
+     * @param Mage_Sales_Model_Order_Creditmemo $creditmemo
+     *
+     * @return string
+     * @throws Aoe_AvaTax_Exception
+     * @throws Exception
+     */
+    public function registerCreditmemo(Aoe_AvaTax_Model_Api $api, Mage_Sales_Model_Order_Creditmemo $creditmemo)
+    {
+        if (!$this->isActive($creditmemo->getStore())) {
+            return null;
+        }
+
+        $incrementId = $creditmemo->getIncrementId();
+        if (empty($incrementId)) {
+            /* @var $entityType Mage_Eav_Model_Entity_Type */
+            $entityType = Mage::getModel('eav/entity_type')->loadByCode('creditmemo');
+            $creditmemo->setIncrementId($entityType->fetchNewIncrementId($creditmemo->getStoreId()));
+        }
+
+        $result = $api->callGetTaxForCreditmemo($creditmemo, true);
+        if ($result['ResultCode'] !== 'Success') {
+            throw new Aoe_AvaTax_Exception($result['ResultCode'], $result['Messages']);
+        }
+
+        // NB: Ignoring the returned tax data on purpose
+
+        $creditmemo->getResource()->beginTransaction();
+
+        try {
+            $creditmemo->setAvataxDocument($result['DocCode']);
+            $creditmemo->save();
+
+            $creditmemo->getOrder()->addStatusHistoryComment(sprintf('RefundInvoice sent to AvaTax (%s)', $result['DocCode']));
+            $creditmemo->getOrder()->save();
+
+            $creditmemo->getResource()->commit();
+        } catch (Exception $e) {
+            $creditmemo->getResource()->rollBack();
+            throw $e;
+        }
+
+        return $result['DocCode'];
+    }
+
     public function getInvoicedSum(Mage_Sales_Model_Order_Invoice $invoice, $attribute)
     {
         $amount = 0.0;

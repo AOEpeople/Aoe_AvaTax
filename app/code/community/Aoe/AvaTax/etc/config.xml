@@ -35,12 +35,6 @@
                     </Log>
                 </entities>
             </Aoe_AvaTax_Resource>
-            <sales>
-                <rewrite>
-                    <!-- Needed to fix a missing event in the core code -->
-                    <order_creditmemo>Aoe_AvaTax_Model_Sales_Creditmemo</order_creditmemo>
-                </rewrite>
-            </sales>
         </models>
         <resources>
             <Aoe_AvaTax>
@@ -88,32 +82,6 @@
                 </totals>
             </order_creditmemo>
         </sales>
-        <events>
-            <sales_order_invoice_register>
-                <observers>
-                    <Aoe_AvaTax>
-                        <class>Aoe_AvaTax/Observer</class>
-                        <method>registerInvoice</method>
-                    </Aoe_AvaTax>
-                </observers>
-            </sales_order_invoice_register>
-            <sales_order_invoice_cancel>
-                <observers>
-                    <Aoe_AvaTax>
-                        <class>Aoe_AvaTax/Observer</class>
-                        <method>voidInvoice</method>
-                    </Aoe_AvaTax>
-                </observers>
-            </sales_order_invoice_cancel>
-            <sales_order_creditmemo_register>
-                <observers>
-                    <Aoe_AvaTax>
-                        <class>Aoe_AvaTax/Observer</class>
-                        <method>registerCreditmemo</method>
-                    </Aoe_AvaTax>
-                </observers>
-            </sales_order_creditmemo_register>
-        </events>
     </global>
     <frontend>
         <layout>
@@ -166,19 +134,39 @@
                 <account></account>
                 <license></license>
                 <log_clean_schedule>0 0 * * *</log_clean_schedule>
+                <register_invoices_schedule>*/5 * * * *</register_invoices_schedule>
+                <register_invoices_batch>25</register_invoices_batch>
+                <register_creditmemos_schedule>*/5 * * * *</register_creditmemos_schedule>
+                <register_creditmemos_batch>25</register_creditmemos_batch>
             </aoe_avatax>
         </tax>
     </default>
     <crontab>
         <jobs>
-            <Aoe_AvaTax_CleanLog>
+            <aoe_avatax_cleanlog>
                 <schedule>
                     <config_path>tax/aoe_avatax/log_clean_schedule</config_path>
                 </schedule>
                 <run>
                     <model>Aoe_AvaTax/Observer::cleanLog</model>
                 </run>
-            </Aoe_AvaTax_CleanLog>
+            </aoe_avatax_cleanlog>
+            <aoe_avatax_registerinvoices>
+                <schedule>
+                    <config_path>tax/aoe_avatax/register_invoices_schedule</config_path>
+                </schedule>
+                <run>
+                    <model>Aoe_AvaTax/Observer::registerInvoices</model>
+                </run>
+            </aoe_avatax_registerinvoices>
+            <aoe_avatax_registercreditmemos>
+                <schedule>
+                    <config_path>tax/aoe_avatax/register_creditmemos_schedule</config_path>
+                </schedule>
+                <run>
+                    <model>Aoe_AvaTax/Observer::registerCreditmemos</model>
+                </run>
+            </aoe_avatax_registercreditmemos>
         </jobs>
     </crontab>
     <phpunit>
