@@ -130,7 +130,7 @@
                 <production_url>https://avatax.avalara.net</production_url>
                 <sandbox_url>https://development.avalara.net</sandbox_url>
                 <api_timeout>60</api_timeout>
-                <api_cache_timeout></api_cache_timeout>
+                <api_cache_timeout>3600</api_cache_timeout>
                 <account></account>
                 <license></license>
                 <log_clean_schedule>0 0 * * *</log_clean_schedule>

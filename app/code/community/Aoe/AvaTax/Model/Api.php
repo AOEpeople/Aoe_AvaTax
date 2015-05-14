@@ -80,12 +80,16 @@ abstract class Aoe_AvaTax_Model_Api
 
     protected function saveResult($hash, $result)
     {
-        Mage::app()->saveCache(
-            (is_string($result) ? $result : json_encode($result)),
-            'Aoe_AvaTax_CACHE_' . $hash,
-            array('Aoe_AvaTax_CACHE'),
-            36000
-        );
+        $cacheTimeout = max(intval($this->getHelper()->getConfig('api_cache_timeout')), 0);
+
+        if($cacheTimeout > 0) {
+            Mage::app()->saveCache(
+                (is_string($result) ? $result : json_encode($result)),
+                'Aoe_AvaTax_CACHE_' . $hash,
+                array('Aoe_AvaTax_CACHE'),
+                $cacheTimeout
+            );
+        }
 
         return $this;
     }
