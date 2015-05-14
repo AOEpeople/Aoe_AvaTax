@@ -82,7 +82,7 @@ abstract class Aoe_AvaTax_Model_Api
     {
         $cacheTimeout = max(intval($this->getHelper()->getConfig('api_cache_timeout')), 0);
 
-        if($cacheTimeout > 0) {
+        if ($cacheTimeout > 0) {
             Mage::app()->saveCache(
                 (is_string($result) ? $result : json_encode($result)),
                 'Aoe_AvaTax_CACHE_' . $hash,
@@ -96,10 +96,10 @@ abstract class Aoe_AvaTax_Model_Api
 
     /**
      * @param Mage_Core_Model_Store $store
-     * @param array                 $request
-     * @param array                 $result
+     * @param array|string          $request
+     * @param array|string          $result
      */
-    protected function logRequestResult(Mage_Core_Model_Store $store, array $request, array $result)
+    protected function logRequestResult(Mage_Core_Model_Store $store, $request, $result)
     {
         try {
             /** @var Aoe_AvaTax_Model_Log $log */
@@ -118,10 +118,11 @@ abstract class Aoe_AvaTax_Model_Api
 
     /**
      * @param Mage_Core_Model_Store $store
-     * @param array                 $request
+     * @param array|string          $request
+     * @param array|string          $result
      * @param Exception             $exception
      */
-    protected function logRequestException(Mage_Core_Model_Store $store, array $request, Exception $exception)
+    protected function logRequestException(Mage_Core_Model_Store $store, $request, $result, Exception $exception)
     {
         try {
             /** @var Aoe_AvaTax_Model_Log $log */
@@ -130,6 +131,7 @@ abstract class Aoe_AvaTax_Model_Api
             $log->setStore($store);
             $log->setUrl($this->getBaseUrl($store));
             $log->setRequestBody(is_string($request) ? $request : json_encode($request));
+            $log->setResultBody(is_string($result) ? $result : json_encode($result));
             $log->setFailureMessage($exception->getMessage());
             $log->setResultCode(Aoe_AvaTax_Model_Log::CODE_FAILURE);
             $log->save();

@@ -50,11 +50,7 @@ class Aoe_AvaTax_Model_RestApi extends Aoe_AvaTax_Model_Api
 
         $request = $this->prepareRequest($request);
 
-        $result = $this->call($invoice->getStore(), '1.0/tax/cancel', $request);
-
-        $result = (isset($result['CancelTaxResult']) ? $result['CancelTaxResult'] : $result);
-
-        return $result;
+        return $this->call($invoice->getStore(), '1.0/tax/cancel', $request, 'CancelTaxResult');
     }
 
     public function callDeleteTaxForInvoice(Mage_Sales_Model_Order_Invoice $invoice)
@@ -69,11 +65,7 @@ class Aoe_AvaTax_Model_RestApi extends Aoe_AvaTax_Model_Api
 
         $request = $this->prepareRequest($request);
 
-        $result = $this->call($invoice->getStore(), '1.0/tax/cancel', $request);
-
-        $result = (isset($result['CancelTaxResult']) ? $result['CancelTaxResult'] : $result);
-
-        return $result;
+        return $this->call($invoice->getStore(), '1.0/tax/cancel', $request, 'CancelTaxResult');
     }
 
     public function callVoidTaxForCreditmemo(Mage_Sales_Model_Order_Creditmemo $creditmemo)
@@ -88,11 +80,7 @@ class Aoe_AvaTax_Model_RestApi extends Aoe_AvaTax_Model_Api
 
         $request = $this->prepareRequest($request);
 
-        $result = $this->call($creditmemo->getStore(), '1.0/tax/cancel', $request);
-
-        $result = (isset($result['CancelTaxResult']) ? $result['CancelTaxResult'] : $result);
-
-        return $result;
+        return $this->call($creditmemo->getStore(), '1.0/tax/cancel', $request, 'CancelTaxResult');
     }
 
     public function callDeleteTaxForCreditmemo(Mage_Sales_Model_Order_Creditmemo $creditmemo)
@@ -107,14 +95,10 @@ class Aoe_AvaTax_Model_RestApi extends Aoe_AvaTax_Model_Api
 
         $request = $this->prepareRequest($request);
 
-        $result = $this->call($creditmemo->getStore(), '1.0/tax/cancel', $request);
-
-        $result = (isset($result['CancelTaxResult']) ? $result['CancelTaxResult'] : $result);
-
-        return $result;
+        return $this->call($creditmemo->getStore(), '1.0/tax/cancel', $request, 'CancelTaxResult');
     }
 
-    protected function call(Mage_Core_Model_Store $store, $path, array $request)
+    protected function call(Mage_Core_Model_Store $store, $path, array $request, $resultKey = null)
     {
         $account = $this->getAccount($store);
         $license = $this->getLicense($store);
@@ -122,6 +106,7 @@ class Aoe_AvaTax_Model_RestApi extends Aoe_AvaTax_Model_Api
         $timeout = $this->getTimeout($store);
         $request = $this->recursiveKeySort($request);
         $requestBody = json_encode($request);
+        $resultBody = '';
 
         $hash = $this->generateHash($request, array($account, $license, $url));
         $result = $this->loadResult($hash);
@@ -138,15 +123,6 @@ class Aoe_AvaTax_Model_RestApi extends Aoe_AvaTax_Model_Api
             $client->setRawData($requestBody);
 
             $response = $client->request(Zend_Http_Client::POST);
-            if ($response->getStatus() >= 500) {
-                $message = $response->getStatus();
-                $result = json_decode($response->getBody(), true);
-                if (is_array($result)) {
-                    $message .= "\n" . print_r($result, true);
-                }
-
-                Mage::throwException('Invalid response: ' . $message);
-            }
 
             $resultBody = $response->getBody();
 
@@ -155,13 +131,17 @@ class Aoe_AvaTax_Model_RestApi extends Aoe_AvaTax_Model_Api
                 Mage::throwException('Invalid response: Could not decode JSON body');
             }
 
-            $this->saveResult($hash, $resultBody);
+            if ($resultKey && array_key_exists($resultKey, $result)) {
+                $result = $result[$resultKey];
+            }
 
             $this->logRequestResult($store, $request, $result);
 
+            $this->saveResult($hash, $result);
+
             return $result;
         } catch (Exception $e) {
-            $this->logRequestException($store, $request, $e);
+            $this->logRequestException($store, $requestBody, $resultBody, $e);
             throw $e;
         }
     }
