@@ -11,6 +11,7 @@
                 <Mage_Tax/>
                 <Mage_Sales/>
                 <Mage_Catalog/>
+                <Mage_Shipping/>
                 <Aoe_Layout/>
             </depends>
         </Aoe_AvaTax>

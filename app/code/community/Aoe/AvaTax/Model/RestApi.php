@@ -153,13 +153,12 @@ class Aoe_AvaTax_Model_RestApi extends Aoe_AvaTax_Model_Api
 
     protected function getOriginAddress($code, $store = null)
     {
-        $street = Mage::getStoreConfig('shipping/origin/street', $store);
-        $street = array_values(array_filter(explode("\n", $street, 3)));
+        $street1 = Mage::getStoreConfig(Mage_Shipping_Model_Shipping::XML_PATH_STORE_ADDRESS1, $store);
+        $street2 = Mage::getStoreConfig(Mage_Shipping_Model_Shipping::XML_PATH_STORE_ADDRESS2, $store);
 
         $data = array(
-            'Line1'      => $this->limit((isset($street[0]) ? $street[0] : ''), 50),
-            'Line2'      => $this->limit((isset($street[1]) ? $street[1] : ''), 50),
-            'Line3'      => $this->limit((isset($street[2]) ? $street[2] : ''), 50),
+            'Line1'      => $this->limit($street1, 50),
+            'Line2'      => $this->limit($street2, 50),
             'City'       => $this->limit(Mage::getStoreConfig('shipping/origin/city', $store), 50),
             'Region'     => $this->limit(Mage::getModel('directory/region')->load(Mage::getStoreConfig('shipping/origin/region_id', $store))->getCode(), 3),
             'Country'    => $this->limit(Mage::getStoreConfig('shipping/origin/country_id', $store), 2),
