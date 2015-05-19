@@ -153,16 +153,13 @@ class Aoe_AvaTax_Model_RestApi extends Aoe_AvaTax_Model_Api
 
     protected function getOriginAddress($code, $store = null)
     {
-        $street1 = Mage::getStoreConfig(Mage_Shipping_Model_Shipping::XML_PATH_STORE_ADDRESS1, $store);
-        $street2 = Mage::getStoreConfig(Mage_Shipping_Model_Shipping::XML_PATH_STORE_ADDRESS2, $store);
-
         $data = array(
-            'Line1'      => $this->limit($street1, 50),
-            'Line2'      => $this->limit($street2, 50),
-            'City'       => $this->limit(Mage::getStoreConfig('shipping/origin/city', $store), 50),
-            'Region'     => $this->limit(Mage::getModel('directory/region')->load(Mage::getStoreConfig('shipping/origin/region_id', $store))->getCode(), 3),
-            'Country'    => $this->limit(Mage::getStoreConfig('shipping/origin/country_id', $store), 2),
-            'PostalCode' => $this->limit(Mage::getStoreConfig('shipping/origin/postcode', $store), 11),
+            'Line1'      => $this->limit(Mage::getStoreConfig(Mage_Shipping_Model_Shipping::XML_PATH_STORE_ADDRESS1, $store), 50),
+            'Line2'      => $this->limit(Mage::getStoreConfig(Mage_Shipping_Model_Shipping::XML_PATH_STORE_ADDRESS2, $store), 50),
+            'City'       => $this->limit(Mage::getStoreConfig(Mage_Shipping_Model_Shipping::XML_PATH_STORE_CITY, $store), 50),
+            'Region'     => $this->limit(Mage::getModel('directory/region')->load(Mage::getStoreConfig(Mage_Shipping_Model_Shipping::XML_PATH_STORE_REGION_ID, $store))->getCode(), 3),
+            'Country'    => $this->limit(Mage::getStoreConfig(Mage_Shipping_Model_Shipping::XML_PATH_STORE_COUNTRY_ID, $store), 2),
+            'PostalCode' => $this->limit(Mage::getStoreConfig(Mage_Shipping_Model_Shipping::XML_PATH_STORE_ZIP, $store), 11),
         );
 
         $data = array_filter($data);
