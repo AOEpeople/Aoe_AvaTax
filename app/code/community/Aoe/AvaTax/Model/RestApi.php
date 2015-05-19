@@ -197,14 +197,10 @@ class Aoe_AvaTax_Model_RestApi extends Aoe_AvaTax_Model_Api
 
     protected function createTaxRequestFromQuoteAddress(Mage_Sales_Model_Quote_Address $address)
     {
-        /** @var Mage_Tax_Model_Config $taxConfig */
-        $taxConfig = Mage::getSingleton('Mage_Tax_Model_Config');
-
         $quote = $address->getQuote();
         $store = $quote->getStore();
 
-        /** @var bool $hideDiscountAmount */
-        $hideDiscountAmount = Mage::helper('tax')->applyTaxAfterDiscount($store);
+        $hideDiscountAmount = Mage::getStoreConfigFlag(Mage_Tax_Model_Config::CONFIG_XML_PATH_APPLY_AFTER_DISCOUNT, $store);
 
         $timestamp = ($quote->getCreatedAt() ? Varien_Date::toTimestamp($quote->getCreatedAt()) : now());
         $date = new Zend_Date($timestamp);
@@ -229,6 +225,7 @@ class Aoe_AvaTax_Model_RestApi extends Aoe_AvaTax_Model_Api
         $request['Addresses'][] = $this->getOriginAddress('ORIGIN', $store);
         $request['Addresses'][] = $this->getAddress('DESTINATION', $address);
 
+        $itemPriceIncludesTax = Mage::getStoreConfigFlag(Mage_Tax_Model_Config::CONFIG_XML_PATH_PRICE_INCLUDES_TAX, $store);
         foreach ($address->getAllItems() as $k => $item) {
             /** @var Mage_Sales_Model_Quote_Item|Mage_Sales_Model_Quote_Address_Item $item */
             $request['Lines'][] = array(
@@ -241,12 +238,13 @@ class Aoe_AvaTax_Model_RestApi extends Aoe_AvaTax_Model_Api
                 "Description"     => $this->limit($item->getName(), 255),
                 "TaxCode"         => $this->limit($this->getHelper()->getProductTaxCode($item->getProduct()), 25),
                 "Discounted"      => ($item->getBaseDiscountAmount() > 0.0),
-                "TaxIncluded"     => $taxConfig->priceIncludesTax($store),
+                "TaxIncluded"     => $itemPriceIncludesTax,
                 "Ref1"            => $this->limit($this->getHelper()->getQuoteItemRef1($item, $store), 250),
                 "Ref2"            => $this->limit($this->getHelper()->getQuoteItemRef2($item, $store), 250),
             );
         }
 
+        $shippingPriceIncludesTax = Mage::getStoreConfigFlag(Mage_Tax_Model_Config::CONFIG_XML_PATH_SHIPPING_INCLUDES_TAX, $store);
         $request['Lines'][] = array(
             "LineNo"          => "SHIPPING",
             "ItemCode"        => "SHIPPING",
@@ -257,7 +255,7 @@ class Aoe_AvaTax_Model_RestApi extends Aoe_AvaTax_Model_Api
             "Description"     => $this->limit("Shipping: " . $address->getShippingMethod(), 255),
             "TaxCode"         => $this->limit($this->getHelper()->getShippingTaxCode($store), 25),
             "Discounted"      => ($address->getBaseShippingDiscountAmount() > 0.0),
-            "TaxIncluded"     => $taxConfig->shippingPriceIncludesTax($store),
+            "TaxIncluded"     => $shippingPriceIncludesTax,
             "Ref1"            => $this->limit($address->getShippingMethod(), 250),
         );
 
@@ -268,17 +266,13 @@ class Aoe_AvaTax_Model_RestApi extends Aoe_AvaTax_Model_Api
 
     protected function createTaxRequestFromInvoice(Mage_Sales_Model_Order_Invoice $invoice, $commit = false)
     {
-        /** @var Mage_Tax_Model_Config $taxConfig */
-        $taxConfig = Mage::getSingleton('Mage_Tax_Model_Config');
-
         $order = $invoice->getOrder();
         $store = $invoice->getStore();
 
         /** @var Mage_Customer_Model_Customer $customer */
         $customer = Mage::getModel('customer/customer')->load($order->getCustomerId());
 
-        /** @var bool $hideDiscountAmount */
-        $hideDiscountAmount = Mage::helper('tax')->applyTaxAfterDiscount($store);
+        $hideDiscountAmount = Mage::getStoreConfigFlag(Mage_Tax_Model_Config::CONFIG_XML_PATH_APPLY_AFTER_DISCOUNT, $store);
 
         $request = array(
             'Client'        => 'Aoe_AvaTax',
@@ -303,7 +297,7 @@ class Aoe_AvaTax_Model_RestApi extends Aoe_AvaTax_Model_Api
         $request['Addresses'][] = $this->getOriginAddress('ORIGIN', $store);
         $request['Addresses'][] = $this->getAddress('DESTINATION', $order->getShippingAddress());
 
-        $itemPriceIncludesTax = $taxConfig->priceIncludesTax($store);
+        $itemPriceIncludesTax = Mage::getStoreConfigFlag(Mage_Tax_Model_Config::CONFIG_XML_PATH_PRICE_INCLUDES_TAX, $store);
         foreach ($invoice->getAllItems() as $k => $item) {
             /** @var Mage_Sales_Model_Order_Invoice_Item $item */
             $request['Lines'][] = array(
@@ -322,7 +316,7 @@ class Aoe_AvaTax_Model_RestApi extends Aoe_AvaTax_Model_Api
             );
         }
 
-        $shippingPriceIncludesTax = $taxConfig->shippingPriceIncludesTax($store);
+        $shippingPriceIncludesTax = Mage::getStoreConfigFlag(Mage_Tax_Model_Config::CONFIG_XML_PATH_SHIPPING_INCLUDES_TAX, $store);
         $request['Lines'][] = array(
             "LineNo"          => "SHIPPING",
             "ItemCode"        => "SHIPPING",
@@ -344,9 +338,6 @@ class Aoe_AvaTax_Model_RestApi extends Aoe_AvaTax_Model_Api
 
     protected function createTaxRequestFromCreditmemo(Mage_Sales_Model_Order_Creditmemo $creditmemo, $commit = false)
     {
-        /** @var Mage_Tax_Model_Config $taxConfig */
-        $taxConfig = Mage::getSingleton('Mage_Tax_Model_Config');
-
         $order = $creditmemo->getOrder();
         $store = $creditmemo->getStore();
         $invoice = $creditmemo->getInvoice();
@@ -354,8 +345,7 @@ class Aoe_AvaTax_Model_RestApi extends Aoe_AvaTax_Model_Api
         /** @var Mage_Customer_Model_Customer $customer */
         $customer = Mage::getModel('customer/customer')->load($order->getCustomerId());
 
-        /** @var bool $hideDiscountAmount */
-        $hideDiscountAmount = Mage::helper('tax')->applyTaxAfterDiscount($store);
+        $hideDiscountAmount = Mage::getStoreConfigFlag(Mage_Tax_Model_Config::CONFIG_XML_PATH_APPLY_AFTER_DISCOUNT, $store);
 
         $request = array(
             'Client'        => 'Aoe_AvaTax',
@@ -380,7 +370,7 @@ class Aoe_AvaTax_Model_RestApi extends Aoe_AvaTax_Model_Api
         $request['Addresses'][] = $this->getOriginAddress('ORIGIN', $store);
         $request['Addresses'][] = $this->getAddress('DESTINATION', $order->getShippingAddress());
 
-        $itemPriceIncludesTax = $taxConfig->priceIncludesTax($store);
+        $itemPriceIncludesTax = Mage::getStoreConfigFlag(Mage_Tax_Model_Config::CONFIG_XML_PATH_PRICE_INCLUDES_TAX, $store);
         foreach ($creditmemo->getAllItems() as $k => $item) {
             /** @var Mage_Sales_Model_Order_Creditmemo_Item $item */
             $request['Lines'][] = array(
@@ -399,7 +389,7 @@ class Aoe_AvaTax_Model_RestApi extends Aoe_AvaTax_Model_Api
             );
         }
 
-        $shippingPriceIncludesTax = $taxConfig->shippingPriceIncludesTax($store);
+        $shippingPriceIncludesTax = Mage::getStoreConfigFlag(Mage_Tax_Model_Config::CONFIG_XML_PATH_SHIPPING_INCLUDES_TAX, $store);
         $request['Lines'][] = array(
             "LineNo"          => "SHIPPING",
             "ItemCode"        => "SHIPPING",
