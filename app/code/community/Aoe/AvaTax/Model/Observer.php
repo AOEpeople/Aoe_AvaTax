@@ -64,6 +64,9 @@ class Aoe_AvaTax_Model_Observer
                         $invoice->setDataChanges(true);
                         $invoice->addComment('Failed to register invoice with AvaTax: ' . $e->getMessage());
                         $invoice->save();
+
+                        $invoice->getOrder()->addStatusHistoryComment('Failed to register invoice with AvaTax: ' . $e->getMessage());
+                        $invoice->getOrder()->save();
                     } catch (Exception $e2) {
                         Mage::logException($e2);
                     }
@@ -107,6 +110,9 @@ class Aoe_AvaTax_Model_Observer
                         $creditmemo->setDataChanges(true);
                         $creditmemo->addComment('Failed to register creditmemo with AvaTax: ' . $e->getMessage());
                         $creditmemo->save();
+
+                        $creditmemo->getOrder()->addStatusHistoryComment('Failed to register creditmemo with AvaTax: ' . $e->getMessage());
+                        $creditmemo->getOrder()->save();
                     } catch (Exception $e2) {
                         Mage::logException($e2);
                     }
