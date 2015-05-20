@@ -89,7 +89,7 @@ class Aoe_AvaTax_Model_Observer
             $limit = max(intval($helper->getConfig('register_creditmemos_batch', $store)), 25);
 
             /** @var Mage_Sales_Model_Resource_Order_Creditmemo_Collection $creditmemos */
-            $creditmemos = Mage::getSingleton('sales/order_invoice')->getCollection();
+            $creditmemos = Mage::getSingleton('sales/order_creditmemo')->getCollection();
             $creditmemos->addFieldToFilter('store_id', $store->getId());
             $creditmemos->addFieldToFilter('avatax_document', array('null' => true));
             $creditmemos->addOrder('updated_at', 'ASC');
@@ -101,7 +101,7 @@ class Aoe_AvaTax_Model_Observer
             foreach ($creditmemos as $creditmemo) {
                 /** @var Mage_Sales_Model_Order_Creditmemo $creditmemo */
                 try {
-                    $helper->registerInvoice($api, $creditmemo);
+                    $helper->registerCreditmemo($api, $creditmemo);
                 } catch (Exception $e) {
                     try {
                         $creditmemo->setDataChanges(true);
