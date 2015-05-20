@@ -49,6 +49,7 @@ class Aoe_AvaTax_Helper_Data extends Mage_Core_Helper_Abstract
 
         try {
             $invoice->setAvataxDocument($result['DocCode']);
+            $invoice->addComment(sprintf('SalesInvoice sent to AvaTax (%s)', $result['DocCode']));
             $invoice->save();
 
             $invoice->getOrder()->addStatusHistoryComment(sprintf('SalesInvoice sent to AvaTax (%s)', $result['DocCode']));
@@ -112,6 +113,7 @@ class Aoe_AvaTax_Helper_Data extends Mage_Core_Helper_Abstract
 
         try {
             $creditmemo->setAvataxDocument($result['DocCode']);
+            $creditmemo->addComment(sprintf('RefundInvoice sent to AvaTax (%s)', $result['DocCode']));
             $creditmemo->save();
 
             $creditmemo->getOrder()->addStatusHistoryComment(sprintf('RefundInvoice sent to AvaTax (%s)', $result['DocCode']));
