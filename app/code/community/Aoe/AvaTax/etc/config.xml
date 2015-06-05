@@ -135,6 +135,7 @@
                 <shipping_tax_class>4</shipping_tax_class>
             </classes>
             <aoe_avatax>
+                <api_type>rest</api_type>
                 <mode>sandbox</mode>
                 <debug>1</debug>
                 <production_url>https://avatax.avalara.net</production_url>

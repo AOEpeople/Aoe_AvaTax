@@ -34,9 +34,6 @@ class Aoe_AvaTax_Model_Observer
     {
         $helper = $this->getHelper();
 
-        /** @var Aoe_AvaTax_Model_Api $api */
-        $api = Mage::getModel('Aoe_AvaTax/SoapApi');
-
         $result = array('registered' => array(), 'errors' => array());
 
         foreach (Mage::app()->getStores() as $store) {
@@ -44,6 +41,8 @@ class Aoe_AvaTax_Model_Observer
             if (!$helper->isActive($store)) {
                 continue;
             }
+
+            $api = $helper->getApi($store);
 
             $limit = max(intval($helper->getConfig('register_invoices_batch', $store)), 25);
 
@@ -100,9 +99,6 @@ class Aoe_AvaTax_Model_Observer
     {
         $helper = $this->getHelper();
 
-        /** @var Aoe_AvaTax_Model_Api $api */
-        $api = Mage::getModel('Aoe_AvaTax/SoapApi');
-
         $result = array('registered' => array(), 'errors' => array());
 
         foreach (Mage::app()->getStores() as $store) {
@@ -110,6 +106,8 @@ class Aoe_AvaTax_Model_Observer
             if (!$helper->isActive($store)) {
                 continue;
             }
+
+            $api = $helper->getApi($store);
 
             $limit = max(intval($helper->getConfig('register_creditmemos_batch', $store)), 25);
 

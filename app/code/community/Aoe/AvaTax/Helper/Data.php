@@ -16,6 +16,25 @@ class Aoe_AvaTax_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * @param Mage_Core_Model_Store $store
+     *
+     * @return Aoe_AvaTax_Model_Api
+     */
+    public function getApi(Mage_Core_Model_Store $store)
+    {
+        $apiType = trim($this->getConfig('api_type', $store));
+
+        /** @var Aoe_AvaTax_Model_Api $api */
+        if ($apiType === 'soap') {
+            $api = Mage::getModel('Aoe_AvaTax/SoapApi');
+        } else {
+            $api = Mage::getModel('Aoe_AvaTax/RestApi');
+        }
+
+        return $api;
+    }
+
+    /**
      * Generate and send a SalesInvoice
      *
      * @param Aoe_AvaTax_Model_Api           $api
