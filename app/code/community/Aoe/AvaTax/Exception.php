@@ -10,7 +10,7 @@ class Aoe_AvaTax_Exception extends Mage_Core_Exception
         $this->messages = $messages;
     }
 
-    public function getMessages()
+    public function getAvaTaxMessages()
     {
         return $this->messages;
     }
