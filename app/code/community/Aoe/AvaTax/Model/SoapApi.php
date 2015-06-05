@@ -160,7 +160,23 @@ class Aoe_AvaTax_Model_SoapApi extends Aoe_AvaTax_Model_Api
 
         // TODO: Handle giftwrapping
 
-        return $this->callGetTax($store, $request);
+        $result = $this->callGetTax($store, $request);
+
+        if ($result['ResultCode'] === 'Error' && count($result['Messages']) === 1 && $helper->getConfigFlag('invoice_reattach', $store)) {
+            $message = reset($result['Messages']);
+            if ($message['Name'] === 'DocStatusError' && $message['Details'] === 'Expected Saved|Posted') {
+                $request = new AvaTax\GetTaxHistoryRequest();
+                $request->setCompanyCode($helper->getConfig('company_code', $store));
+                $request->setDocType($commit ? AvaTax\DocumentType::$SalesInvoice : AvaTax\DocumentType::$SalesOrder);
+                $request->setDocCode($helper->getInvoiceDocCode($invoice));
+                $request->setDetailLevel(AvaTax\DetailLevel::$Tax);
+
+                $historyResult = $this->callGetTaxHistory($store, $request);
+                $result = $historyResult['GetTaxResult'];
+            }
+        }
+
+        return $result;
     }
 
     public function callVoidTaxForInvoice(Mage_Sales_Model_Order_Invoice $invoice)
@@ -254,7 +270,23 @@ class Aoe_AvaTax_Model_SoapApi extends Aoe_AvaTax_Model_Api
 
         // TODO: Handle giftwrapping
 
-        return $this->callGetTax($store, $request);
+        $result = $this->callGetTax($store, $request);
+
+        if ($result['ResultCode'] === 'Error' && count($result['Messages']) === 1 && $helper->getConfigFlag('creditmemo_reattach', $store)) {
+            $message = reset($result['Messages']);
+            if ($message['Name'] === 'DocStatusError' && $message['Details'] === 'Expected Saved|Posted') {
+                $request = new AvaTax\GetTaxHistoryRequest();
+                $request->setCompanyCode($helper->getConfig('company_code', $store));
+                $request->setDocType($commit ? AvaTax\DocumentType::$ReturnInvoice : AvaTax\DocumentType::$ReturnOrder);
+                $request->setDocCode($helper->getCreditmemoDocCode($creditmemo));
+                $request->setDetailLevel(AvaTax\DetailLevel::$Tax);
+
+                $historyResult = $this->callGetTaxHistory($store, $request);
+                $result = $historyResult['GetTaxResult'];
+            }
+        }
+
+        return $result;
     }
 
     public function callVoidTaxForCreditmemo(Mage_Sales_Model_Order_Creditmemo $creditmemo)
