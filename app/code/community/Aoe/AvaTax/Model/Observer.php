@@ -37,6 +37,8 @@ class Aoe_AvaTax_Model_Observer
         /** @var Aoe_AvaTax_Model_Api $api */
         $api = Mage::getModel('Aoe_AvaTax/RestApi');
 
+        $result = array('registered' => array(), 'errors' => array());
+
         foreach (Mage::app()->getStores() as $store) {
             /** @var Mage_Core_Model_Store $store */
             if (!$helper->isActive($store)) {
@@ -59,7 +61,15 @@ class Aoe_AvaTax_Model_Observer
                 /** @var Mage_Sales_Model_Order_Invoice $invoice */
                 try {
                     $helper->registerInvoice($api, $invoice);
+                    $result['registered'][] = $invoice->getIncrementId();
                 } catch (Exception $e) {
+                    $result['errors'][] = $e->getMessage();
+                    if ($e instanceof Aoe_AvaTax_Exception && count($e->getAvaTaxMessages())) {
+                        foreach ($e->getAvaTaxMessages() as $message) {
+                            $result['errors'][] = $message;
+                        }
+                    }
+
                     try {
                         $invoice->setDataChanges(true);
                         $invoice->addComment('Failed to register invoice with AvaTax: ' . $e->getMessage());
@@ -68,12 +78,22 @@ class Aoe_AvaTax_Model_Observer
                         $invoice->getOrder()->addStatusHistoryComment('Failed to register invoice with AvaTax: ' . $e->getMessage());
                         $invoice->getOrder()->save();
                     } catch (Exception $e2) {
+                        $result['errors'][] = $e2->getMessage();
                         Mage::logException($e2);
                     }
+
                     Mage::logException($e);
                 }
             }
         }
+
+        if (count($result['errors'])) {
+            $schedule->setStatus(Mage_Cron_Model_Schedule::STATUS_ERROR);
+        } elseif (!count($result['registered'])) {
+            $schedule->setStatus('nothing');
+        }
+
+        return $result;
     }
 
     public function registerCreditmemos(Mage_Cron_Model_Schedule $schedule)
@@ -82,6 +102,8 @@ class Aoe_AvaTax_Model_Observer
 
         /** @var Aoe_AvaTax_Model_Api $api */
         $api = Mage::getModel('Aoe_AvaTax/RestApi');
+
+        $result = array('registered' => array(), 'errors' => array());
 
         foreach (Mage::app()->getStores() as $store) {
             /** @var Mage_Core_Model_Store $store */
@@ -105,7 +127,15 @@ class Aoe_AvaTax_Model_Observer
                 /** @var Mage_Sales_Model_Order_Creditmemo $creditmemo */
                 try {
                     $helper->registerCreditmemo($api, $creditmemo);
+                    $result['registered'][] = $creditmemo->getIncrementId();
                 } catch (Exception $e) {
+                    $result['errors'][] = $e->getMessage();
+                    if ($e instanceof Aoe_AvaTax_Exception && count($e->getAvaTaxMessages())) {
+                        foreach ($e->getAvaTaxMessages() as $message) {
+                            $result['errors'][] = $message;
+                        }
+                    }
+
                     try {
                         $creditmemo->setDataChanges(true);
                         $creditmemo->addComment('Failed to register creditmemo with AvaTax: ' . $e->getMessage());
@@ -114,12 +144,22 @@ class Aoe_AvaTax_Model_Observer
                         $creditmemo->getOrder()->addStatusHistoryComment('Failed to register creditmemo with AvaTax: ' . $e->getMessage());
                         $creditmemo->getOrder()->save();
                     } catch (Exception $e2) {
+                        $result['errors'][] = $e2->getMessage();
                         Mage::logException($e2);
                     }
+
                     Mage::logException($e);
                 }
             }
         }
+
+        if (count($result['errors'])) {
+            $schedule->setStatus(Mage_Cron_Model_Schedule::STATUS_ERROR);
+        } elseif (!count($result['registered'])) {
+            $schedule->setStatus('nothing');
+        }
+
+        return $result;
     }
 
     public function registerAutoloader(Varien_Event_Observer $observer)
