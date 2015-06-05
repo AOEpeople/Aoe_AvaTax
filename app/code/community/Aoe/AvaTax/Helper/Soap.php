@@ -22,6 +22,7 @@ class Aoe_AvaTax_Helper_Soap extends Aoe_AvaTax_Helper_Data
         $request = array(
             'CompanyCode'              => $soapRequest->getCompanyCode(),
             'DocType'                  => $soapRequest->getDocType(),
+            'DocCode'                  => $soapRequest->getDocCode(),
             'Commit'                   => $soapRequest->getCommit(),
             'DetailLevel'              => $soapRequest->getDetailLevel(),
             'DocDate'                  => $soapRequest->getDocDate(),
