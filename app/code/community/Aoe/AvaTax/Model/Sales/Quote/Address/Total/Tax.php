@@ -62,7 +62,7 @@ class Aoe_AvaTax_Model_Sales_Quote_Address_Total_Tax extends Mage_Tax_Model_Sale
         }
 
         // Bail out early if possible
-        if ($address->getAddressType() !== 'shipping') {
+        if ($address->getAddressType() !== 'shipping' || $address->validate() !== true) {
             return $this;
         }
 
