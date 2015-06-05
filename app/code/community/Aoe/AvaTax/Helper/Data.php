@@ -326,6 +326,210 @@ class Aoe_AvaTax_Helper_Data extends Mage_Core_Helper_Abstract
         }
     }
 
+    /**
+     * @param string $key
+     * @param mixed  $store
+     *
+     * @return mixed
+     */
+    public function getConfig($key, $store = null)
+    {
+        return Mage::getStoreConfig(self::CONFIG_PREFIX . '/' . ltrim($key, '/'), $store);
+    }
+
+    /**
+     * @param string $key
+     * @param mixed  $store
+     *
+     * @return bool
+     */
+    public function getConfigFlag($key, $store = null)
+    {
+        return Mage::getStoreConfigFlag(self::CONFIG_PREFIX . '/' . ltrim($key, '/'), $store);
+    }
+
+    public function getMode($store = null)
+    {
+        $mode = $this->getConfig('mode', $store);
+        return ($mode === 'production' ? 'production' : 'sandbox');
+    }
+
+    public function getAccount($store = null)
+    {
+        return trim($this->getConfig('account', $store));
+    }
+
+    public function getLicense($store = null)
+    {
+        return trim($this->getConfig('license', $store));
+    }
+
+    public function getUrl($store = null)
+    {
+        return trim($this->getConfig($this->getMode($store) . '_url', $store));
+    }
+
+    /**
+     * @param array $data
+     * @param array $extra
+     *
+     * @return string
+     */
+    protected function generateHash(array $data, array $extra = array())
+    {
+        return sha1(json_encode(array($data, $extra)));
+    }
+
+    /**
+     * @param Mage_Core_Model_Store $store
+     * @param array                 $request
+     *
+     * @return array|false
+     */
+    public function loadResult(Mage_Core_Model_Store $store, array $request)
+    {
+        $extra = array(
+            $this->getAccount($store),
+            $this->getLicense($store),
+            $this->getMode($store)
+        );
+
+        $hash = $this->generateHash($request, $extra);
+
+        $result = Mage::app()->loadCache('Aoe_AvaTax_CACHE_' . $hash);
+
+        if ($result) {
+            $result = json_decode($result, true);
+        } else {
+            $result = false;
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param Mage_Core_Model_Store $store
+     * @param array                 $request
+     * @param array                 $result
+     *
+     * @return $this
+     */
+    public function saveResult(Mage_Core_Model_Store $store, array $request, array $result)
+    {
+        $extra = array(
+            $this->getAccount($store),
+            $this->getLicense($store),
+            $this->getMode($store)
+        );
+
+        $hash = $this->generateHash($request, $extra);
+
+        $cacheTimeout = max(intval($this->getConfig('api_cache_timeout')), 0);
+
+        if ($cacheTimeout > 0) {
+            Mage::app()->saveCache(
+                json_encode($result),
+                'Aoe_AvaTax_CACHE_' . $hash,
+                array('Aoe_AvaTax_CACHE'),
+                $cacheTimeout
+            );
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * @param Mage_Core_Model_Store $store
+     * @param array                 $request
+     * @param array                 $result
+     */
+    public function logRequestResult(Mage_Core_Model_Store $store, array $request, array $result)
+    {
+        try {
+            /** @var Aoe_AvaTax_Model_Log $log */
+            $log = Mage::getModel('Aoe_AvaTax/Log');
+            $log->setCreatedAt(new Zend_Db_Expr('NOW()'));
+            $log->setStore($store);
+            $log->setUrl($this->getUrl($store));
+            $log->setRequestBody(json_encode($request));
+            $log->setResultBody(json_encode($result));
+            $log->setResultCode(isset($result['ResultCode']) ? $result['ResultCode'] : '');
+            $log->save();
+        } catch (Exception $e) {
+            Mage::logException($e);
+        }
+    }
+
+    /**
+     * @param Mage_Core_Model_Store $store
+     * @param array                 $request
+     * @param array                 $result
+     * @param Exception             $exception
+     */
+    public function logRequestException(Mage_Core_Model_Store $store, array $request, array $result, Exception $exception)
+    {
+        try {
+            /** @var Aoe_AvaTax_Model_Log $log */
+            $log = Mage::getModel('Aoe_AvaTax/Log');
+            $log->setCreatedAt(new Zend_Db_Expr('NOW()'));
+            $log->setStore($store);
+            $log->setUrl($this->getUrl($store));
+            $log->setRequestBody(json_encode($request));
+            $log->setResultBody(json_encode($result));
+            $log->setFailureMessage($exception->getMessage());
+            $log->setResultCode(Aoe_AvaTax_Model_Log::CODE_FAILURE);
+            $log->save();
+
+            Mage::logException($exception);
+        } catch (Exception $e) {
+            Mage::logException($e);
+        }
+    }
+
+    public function limit($value, $limit = 0)
+    {
+        $value = trim($value);
+        $limit = intval($limit);
+        if ($limit > 0) {
+            $value = substr($value, 0, $limit);
+        }
+
+        return $value;
+    }
+
+    public function recursiveKeySort(array $data)
+    {
+        ksort($data);
+        foreach ($data as $k => $v) {
+            if (is_array($v)) {
+                $data[$k] = $this->recursiveKeySort($v);
+            }
+        }
+        return $data;
+    }
+
+    public function recursiveFilter(array $data, $strict = false)
+    {
+        foreach ($data as $k => $v) {
+            if (is_array($v)) {
+                $v = $this->recursiveFilter($v, $strict);
+                if (count($v) > 0) {
+                    $data[$k] = $v;
+                } else {
+                    unset($data[$k]);
+                }
+            } elseif ($strict) {
+                if ($v === null || $v === '') {
+                    unset($data[$k]);
+                }
+            } elseif (empty($v)) {
+                unset($data[$k]);
+            }
+        }
+        return $data;
+    }
+
     public function getObjectData(Varien_Object $object, $key)
     {
         $value = null;
@@ -356,27 +560,5 @@ class Aoe_AvaTax_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         return $value;
-    }
-
-    /**
-     * @param string $key
-     * @param mixed  $store
-     *
-     * @return mixed
-     */
-    public function getConfig($key, $store = null)
-    {
-        return Mage::getStoreConfig(self::CONFIG_PREFIX . '/' . ltrim($key, '/'), $store);
-    }
-
-    /**
-     * @param string $key
-     * @param mixed  $store
-     *
-     * @return bool
-     */
-    public function getConfigFlag($key, $store = null)
-    {
-        return Mage::getStoreConfigFlag(self::CONFIG_PREFIX . '/' . ltrim($key, '/'), $store);
     }
 }

@@ -82,6 +82,16 @@
                 </totals>
             </order_creditmemo>
         </sales>
+        <events>
+            <controller_front_init_before>
+                <observers>
+                    <Aoe_AvaTax>
+                        <class>Aoe_AvaTax/Observer</class>
+                        <method>registerAutoloader</method>
+                    </Aoe_AvaTax>
+                </observers>
+            </controller_front_init_before>
+        </events>
     </global>
     <frontend>
         <layout>
