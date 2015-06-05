@@ -35,7 +35,7 @@ class Aoe_AvaTax_Model_Observer
         $helper = $this->getHelper();
 
         /** @var Aoe_AvaTax_Model_Api $api */
-        $api = Mage::getModel('Aoe_AvaTax/RestApi');
+        $api = Mage::getModel('Aoe_AvaTax/SoapApi');
 
         $result = array('registered' => array(), 'errors' => array());
 
@@ -101,7 +101,7 @@ class Aoe_AvaTax_Model_Observer
         $helper = $this->getHelper();
 
         /** @var Aoe_AvaTax_Model_Api $api */
-        $api = Mage::getModel('Aoe_AvaTax/RestApi');
+        $api = Mage::getModel('Aoe_AvaTax/SoapApi');
 
         $result = array('registered' => array(), 'errors' => array());
 

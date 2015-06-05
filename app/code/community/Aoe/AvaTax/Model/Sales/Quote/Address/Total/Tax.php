@@ -68,7 +68,7 @@ class Aoe_AvaTax_Model_Sales_Quote_Address_Total_Tax extends Mage_Tax_Model_Sale
 
         // Get taxes via API call
         /** @var Aoe_AvaTax_Model_Api $api */
-        $api = Mage::getModel('Aoe_AvaTax/RestApi');
+        $api = Mage::getModel('Aoe_AvaTax/SoapApi');
         $result = $api->callGetTaxForQuote($address->getQuote());
 
         if ($result['ResultCode'] === 'Success') {
