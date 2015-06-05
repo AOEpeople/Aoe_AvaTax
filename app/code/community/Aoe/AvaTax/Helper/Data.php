@@ -426,6 +426,10 @@ class Aoe_AvaTax_Helper_Data extends Mage_Core_Helper_Abstract
 
         $cacheTimeout = max(intval($this->getConfig('api_cache_timeout')), 0);
 
+        if ($cacheTimeout > 0 && isset($result['ResultCode']) && $result['ResultCode'] === 'Error') {
+            $cacheTimeout = intval(ceil($cacheTimeout / 10));
+        }
+
         if ($cacheTimeout > 0) {
             Mage::app()->saveCache(
                 json_encode($result),
