@@ -260,4 +260,72 @@ class Aoe_AvaTax_Helper_Soap extends Aoe_AvaTax_Helper_Data
 
         return $this->recursiveKeySort($result);
     }
+
+    /**
+     * @param \AvaTax\GetTaxHistoryRequest $soapRequest
+     *
+     * @return array
+     */
+    public function normalizeGetTaxHistoryRequest(AvaTax\GetTaxHistoryRequest $soapRequest)
+    {
+        $isDevMode = Mage::getIsDeveloperMode();
+        if ($isDevMode) {
+            Mage::setIsDeveloperMode(false);
+        }
+
+        $request = array(
+            'CompanyCode' => $soapRequest->getCompanyCode(),
+            'DocId'       => $soapRequest->getDocId(),
+            'DocCode'     => $soapRequest->getDocCode(),
+            'DocType'     => $soapRequest->getDocType(),
+            'DetailLevel' => $soapRequest->getDetailLevel(),
+        );
+
+        if ($isDevMode) {
+            Mage::setIsDeveloperMode(true);
+        }
+
+        return $this->recursiveKeySort($request);
+    }
+
+    /**
+     * @param \AvaTax\GetTaxHistoryResult $soapResult
+     *
+     * @return array
+     */
+    public function normalizeGetTaxHistoryResult(AvaTax\GetTaxHistoryResult $soapResult)
+    {
+        $isDevMode = Mage::getIsDeveloperMode();
+        if ($isDevMode) {
+            Mage::setIsDeveloperMode(false);
+        }
+
+        $result = array(
+            'TransactionId' => $soapResult->getTransactionId(),
+            'ResultCode'    => $soapResult->getResultCode(),
+            'Messages'      => array(),
+            'GetTaxRequest' => $this->normalizeGetTaxRequest($soapResult->getGetTaxRequest()),
+            'GetTaxResult'  => $this->normalizeGetTaxResult($soapResult->getGetTaxResult())
+        );
+
+        foreach ($soapResult->getMessages() as $message) {
+            /** @var AvaTax\Message $message */
+            $result['Messages'][] = array(
+                'Summary'  => $message->getSummary(),
+                'Details'  => $message->getDetails(),
+                'HelpLink' => $message->getHelpLink(),
+                'RefersTo' => $message->getRefersTo(),
+                'Severity' => $message->getSeverity(),
+                'Source'   => $message->getSource(),
+                'Name'     => $message->getName()
+            );
+        }
+
+        if ($isDevMode) {
+            Mage::setIsDeveloperMode(true);
+        }
+
+        return $this->recursiveKeySort($result);
+    }
+
 }

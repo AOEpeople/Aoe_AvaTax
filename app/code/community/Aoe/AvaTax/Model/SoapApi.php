@@ -337,6 +337,25 @@ class Aoe_AvaTax_Model_SoapApi extends Aoe_AvaTax_Model_Api
         return $resultData;
     }
 
+    protected function callGetTaxHistory(Mage_Core_Model_Store $store, AvaTax\GetTaxHistoryRequest $request)
+    {
+        /** @var Aoe_AvaTax_Helper_Soap $helper */
+        $helper = Mage::helper('Aoe_AvaTax/Soap');
+
+        $requestData = $helper->normalizeGetTaxHistoryRequest($request);
+        $resultData = array();
+        try {
+            $result = $this->getApi($store)->getTaxHistory($request);
+            $resultData = $helper->normalizeGetTaxHistoryResult($result);
+            $helper->logRequestResult($store, $requestData, $resultData);
+        } catch (Exception $e) {
+            $helper->logRequestException($store, $requestData, $resultData, $e);
+            throw $e;
+        }
+
+        return $resultData;
+    }
+
     protected function getOriginAddress(Mage_Core_Model_Store $store)
     {
         $taxAddress = new AvaTax\Address();
