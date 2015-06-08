@@ -2,6 +2,8 @@
 
 class Aoe_AvaTax_Model_Observer
 {
+    protected static $autoloaderRegistered = false;
+
     public function cleanLog(Mage_Cron_Model_Schedule $schedule)
     {
         foreach (Mage::app()->getStores() as $store) {
@@ -162,6 +164,10 @@ class Aoe_AvaTax_Model_Observer
 
     public function registerAutoloader(Varien_Event_Observer $observer)
     {
+        if(self::$autoloaderRegistered) {
+            return;
+        }
+
         spl_autoload_register(
             function ($class) {
                 // namespace prefix
@@ -193,6 +199,8 @@ class Aoe_AvaTax_Model_Observer
             true,
             true
         );
+
+        self::$autoloaderRegistered = true;
     }
 
     /**
