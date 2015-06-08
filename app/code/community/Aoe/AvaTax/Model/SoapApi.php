@@ -1,8 +1,7 @@
 <?php
 
-/**
- * @author Lee Saferite <lee.saferite@aoe.com>
- */
+require_once dirname(__FILE__) . '/../autoloader.php';
+
 class Aoe_AvaTax_Model_SoapApi extends Aoe_AvaTax_Model_Api
 {
     /**

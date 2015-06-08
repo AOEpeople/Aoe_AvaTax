@@ -82,27 +82,6 @@
                 </totals>
             </order_creditmemo>
         </sales>
-        <events>
-            <controller_front_init_before>
-                <observers>
-                    <Aoe_AvaTax>
-                        <type>singleton</type>
-                        <class>Aoe_AvaTax/Observer</class>
-                        <method>registerAutoloader</method>
-                    </Aoe_AvaTax>
-                </observers>
-            </controller_front_init_before>
-            <resource_get_tablename>
-                <!-- This can be removed once https://github.com/AOEpeople/Aoe_Scheduler/issues/123 is resolved -->
-                <observers>
-                    <Aoe_AvaTax>
-                        <type>singleton</type>
-                        <class>Aoe_AvaTax/Observer</class>
-                        <method>registerAutoloader</method>
-                    </Aoe_AvaTax>
-                </observers>
-            </resource_get_tablename>
-        </events>
     </global>
     <frontend>
         <layout>
@@ -164,17 +143,6 @@
         </tax>
     </default>
     <crontab>
-        <events>
-            <resource_get_tablename>
-                <observers>
-                    <Aoe_AvaTax>
-                        <type>singleton</type>
-                        <class>Aoe_AvaTax/Observer</class>
-                        <method>registerAutoloader</method>
-                    </Aoe_AvaTax>
-                </observers>
-            </resource_get_tablename>
-        </events>
         <jobs>
             <aoe_avatax_cleanlog>
                 <schedule>
