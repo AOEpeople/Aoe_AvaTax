@@ -181,7 +181,7 @@ class Aoe_AvaTax_Model_Observer
                 }
 
                 // base directory for the namespace prefix
-                $base_dir = MAGENTO_ROOT . '/lib/AvaTax/';
+                $base_dir = Mage::getBaseDir('lib') . '/AvaTax/';
 
                 // get the relative class name
                 $relative_class = substr($class, $len);
