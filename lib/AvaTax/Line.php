@@ -201,7 +201,7 @@ class Line
 	 * True if tax is included in the line.
 	 * @return boolean	 
 	 */
-	public function getTaxIncluded($value)
+	public function getTaxIncluded()
 	{
 		return $this->TaxIncluded;
     }
