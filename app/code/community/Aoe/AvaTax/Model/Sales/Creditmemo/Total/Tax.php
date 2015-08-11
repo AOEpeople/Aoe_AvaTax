@@ -27,7 +27,7 @@ class Aoe_AvaTax_Model_Sales_Creditmemo_Total_Tax extends Mage_Sales_Model_Order
 
         // Get taxes via API call
         $api = $this->getHelper()->getApi($store);
-        $result = $api->callGetTaxForCreditmemo($creditmemo);
+        $result = $api->callGetTaxForCreditmemo($creditmemo, false);
 
         if ($result['ResultCode'] !== 'Success') {
             throw new Aoe_AvaTax_Exception($result['ResultCode'], $result['Messages']);

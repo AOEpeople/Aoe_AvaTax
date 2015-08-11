@@ -26,7 +26,7 @@ class Aoe_AvaTax_Model_Sales_Invoice_Total_Tax extends Mage_Sales_Model_Order_In
 
         // Get taxes via API call
         $api = $this->getHelper()->getApi($store);
-        $result = $api->callGetTaxForInvoice($invoice);
+        $result = $api->callGetTaxForInvoice($invoice, false);
 
         if ($result['ResultCode'] !== 'Success') {
             throw new Aoe_AvaTax_Exception($result['ResultCode'], $result['Messages']);
