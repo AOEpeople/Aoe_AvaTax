@@ -245,8 +245,8 @@ class Aoe_AvaTax_Model_SoapApi extends Aoe_AvaTax_Model_Api
             $taxLine->setTaxCode($helper->getProductTaxCode($item->getOrderItem()->getProduct()));
             $taxLine->setDiscounted($item->getBaseDiscountAmount() > 0.0);
             $taxLine->setTaxIncluded($itemPriceIncludesTax);
-            $taxLine->setRef1($helper->getInvoiceItemRef1($item, $store));
-            $taxLine->setRef2($helper->getInvoiceItemRef2($item, $store));
+            $taxLine->setRef1($helper->getCreditmemoItemRef1($item, $store));
+            $taxLine->setRef2($helper->getCreditmemoItemRef2($item, $store));
             $taxLines[] = $taxLine;
         }
 
