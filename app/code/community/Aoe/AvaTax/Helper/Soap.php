@@ -183,7 +183,7 @@ class Aoe_AvaTax_Helper_Soap extends Aoe_AvaTax_Helper_Data
                 'RefersTo' => $message->getRefersTo(),
                 'Severity' => $message->getSeverity(),
                 'Source'   => $message->getSource(),
-                'Name'     => $message->getName()
+                'Name'     => $message->getName(),
             );
         }
 
@@ -249,7 +249,7 @@ class Aoe_AvaTax_Helper_Soap extends Aoe_AvaTax_Helper_Data
                 'RefersTo' => $message->getRefersTo(),
                 'Severity' => $message->getSeverity(),
                 'Source'   => $message->getSource(),
-                'Name'     => $message->getName()
+                'Name'     => $message->getName(),
             );
         }
 
@@ -304,7 +304,7 @@ class Aoe_AvaTax_Helper_Soap extends Aoe_AvaTax_Helper_Data
             'ResultCode'    => $soapResult->getResultCode(),
             'Messages'      => array(),
             'GetTaxRequest' => $this->normalizeGetTaxRequest($soapResult->getGetTaxRequest()),
-            'GetTaxResult'  => $this->normalizeGetTaxResult($soapResult->getGetTaxResult())
+            'GetTaxResult'  => $this->normalizeGetTaxResult($soapResult->getGetTaxResult()),
         );
 
         foreach ($soapResult->getMessages() as $message) {
@@ -316,7 +316,7 @@ class Aoe_AvaTax_Helper_Soap extends Aoe_AvaTax_Helper_Data
                 'RefersTo' => $message->getRefersTo(),
                 'Severity' => $message->getSeverity(),
                 'Source'   => $message->getSource(),
-                'Name'     => $message->getName()
+                'Name'     => $message->getName(),
             );
         }
 
@@ -326,5 +326,4 @@ class Aoe_AvaTax_Helper_Soap extends Aoe_AvaTax_Helper_Data
 
         return $this->recursiveKeySort($result);
     }
-
 }

@@ -65,7 +65,6 @@ class Aoe_AvaTax_Model_Sales_Creditmemo_Total_Tax extends Mage_Sales_Model_Order
                     $totalTax += $creditmemo->getShippingTaxAmount();
                     break;
                 default:
-
                     /** @var Mage_Sales_Model_Order_Creditmemo_Item $item */
                     $item = (isset($items[$itemId]) ? $items[$itemId] : false);
                     if (!$item) {

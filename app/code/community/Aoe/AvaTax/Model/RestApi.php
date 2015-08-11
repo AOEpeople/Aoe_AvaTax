@@ -441,9 +441,9 @@ class Aoe_AvaTax_Model_RestApi extends Aoe_AvaTax_Model_Api
                         'Details'  => 'At least 2 addresses are required.',
                         'RefersTo' => 'Addresses',
                         'Severity' => 'Error',
-                        'Source'   => 'Aoe_AvaTax'
-                    )
-                )
+                        'Source'   => 'Aoe_AvaTax',
+                    ),
+                ),
             );
         }
 
@@ -456,9 +456,9 @@ class Aoe_AvaTax_Model_RestApi extends Aoe_AvaTax_Model_Api
                         'Details'  => 'At least 1 line is required.',
                         'RefersTo' => 'Lines',
                         'Severity' => 'Error',
-                        'Source'   => 'Aoe_AvaTax'
-                    )
-                )
+                        'Source'   => 'Aoe_AvaTax',
+                    ),
+                ),
             );
         }
 
@@ -483,6 +483,7 @@ class Aoe_AvaTax_Model_RestApi extends Aoe_AvaTax_Model_Api
                 unset($data[$k]);
             }
         }
+
         return $data;
     }
 }

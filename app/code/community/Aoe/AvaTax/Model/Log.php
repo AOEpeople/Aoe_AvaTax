@@ -99,6 +99,7 @@ class Aoe_AvaTax_Model_Log extends Mage_Core_Model_Abstract
     public function setStore(Mage_Core_Model_Store $store)
     {
         $this->store = $store;
+
         return $this->setStoreId($store->getId());
     }
 

@@ -22,6 +22,7 @@ class Aoe_AvaTax_Model_SoapApi extends Aoe_AvaTax_Model_Api
                 'Messages'   => array(),
                 'TaxLines'   => array(),
             );
+
             return $resultArray;
         }
 
@@ -396,6 +397,7 @@ class Aoe_AvaTax_Model_SoapApi extends Aoe_AvaTax_Model_Api
         $taxAddress->setRegion($this->limit(Mage::getModel('directory/region')->load(Mage::getStoreConfig(Mage_Shipping_Model_Shipping::XML_PATH_STORE_REGION_ID, $store))->getCode(), 3));
         $taxAddress->setCountry($this->limit(Mage::getStoreConfig(Mage_Shipping_Model_Shipping::XML_PATH_STORE_COUNTRY_ID, $store), 2));
         $taxAddress->setPostalCode($this->limit(Mage::getStoreConfig(Mage_Shipping_Model_Shipping::XML_PATH_STORE_ZIP, $store), 11));
+
         return $taxAddress;
     }
 
@@ -421,7 +423,6 @@ class Aoe_AvaTax_Model_SoapApi extends Aoe_AvaTax_Model_Api
     protected function getApi(Mage_Core_Model_Store $store)
     {
         if (!isset($this->apis[$store->getId()])) {
-
             /** @var Aoe_AvaTax_Helper_Data $helper */
             $helper = Mage::helper('Aoe_AvaTax/Data');
 

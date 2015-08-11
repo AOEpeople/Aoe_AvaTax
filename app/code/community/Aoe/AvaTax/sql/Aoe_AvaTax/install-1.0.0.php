@@ -23,7 +23,7 @@ $table->addColumn(
     Varien_Db_Ddl_Table::TYPE_DATETIME,
     null,
     array(
-        'nullable' => false
+        'nullable' => false,
     )
 );
 
@@ -99,7 +99,7 @@ $this->getConnection()->addColumn(
         'type'     => Varien_Db_Ddl_Table::TYPE_TEXT,
         'length'   => 25,
         'nullable' => true,
-        'comment' => 'AvaTax Tax Class Code'
+        'comment'  => 'AvaTax Tax Class Code',
     )
 );
 
@@ -110,7 +110,7 @@ $this->getConnection()->addColumn(
         'type'     => Varien_Db_Ddl_Table::TYPE_TEXT,
         'length'   => 50,
         'nullable' => true,
-        'comment' => 'AvaTax Document'
+        'comment'  => 'AvaTax Document',
     )
 );
 
@@ -121,7 +121,7 @@ $this->getConnection()->addColumn(
         'type'     => Varien_Db_Ddl_Table::TYPE_TEXT,
         'length'   => 50,
         'nullable' => true,
-        'comment' => 'AvaTax Document'
+        'comment'  => 'AvaTax Document',
     )
 );
 

@@ -23,6 +23,7 @@ class Aoe_AvaTax_Model_Sales_Quote_Address_Total_Nominal_Tax extends Aoe_AvaTax_
      * Don't fetch anything
      *
      * @param Mage_Sales_Model_Quote_Address $address
+     *
      * @return array
      */
     public function fetch(Mage_Sales_Model_Quote_Address $address)
@@ -34,6 +35,7 @@ class Aoe_AvaTax_Model_Sales_Quote_Address_Total_Nominal_Tax extends Aoe_AvaTax_
      * Get nominal items only
      *
      * @param Mage_Sales_Model_Quote_Address $address
+     *
      * @return array
      */
     protected function _getAddressItems(Mage_Sales_Model_Quote_Address $address)

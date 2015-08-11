@@ -16,6 +16,7 @@ class Aoe_AvaTax_Model_Sales_Quote_Address_Total_Nominal_Subtotal extends Aoe_Av
      * Get nominal items only
      *
      * @param Mage_Sales_Model_Quote_Address $address
+     *
      * @return array
      */
     protected function _getAddressItems(Mage_Sales_Model_Quote_Address $address)

@@ -19,6 +19,7 @@ abstract class Aoe_AvaTax_Model_Api
     protected function getMode(Mage_Core_Model_Store $store)
     {
         $mode = $this->getHelper()->getConfig('mode', $store);
+
         return ($mode === 'production' ? 'production' : 'sandbox');
     }
 
@@ -158,6 +159,7 @@ abstract class Aoe_AvaTax_Model_Api
                 $data[$k] = $this->recursiveKeySort($v);
             }
         }
+
         return $data;
     }
 

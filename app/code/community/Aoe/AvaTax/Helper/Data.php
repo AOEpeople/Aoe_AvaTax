@@ -228,6 +228,7 @@ class Aoe_AvaTax_Helper_Data extends Mage_Core_Helper_Abstract
         if ($attributeCode) {
             $value = $this->getObjectData($item, $attributeCode);
         }
+
         return $value;
     }
 
@@ -238,6 +239,7 @@ class Aoe_AvaTax_Helper_Data extends Mage_Core_Helper_Abstract
         if ($attributeCode) {
             $value = $this->getObjectData($item, $attributeCode);
         }
+
         return $value;
     }
 
@@ -248,6 +250,7 @@ class Aoe_AvaTax_Helper_Data extends Mage_Core_Helper_Abstract
         if ($attributeCode) {
             $value = $this->getObjectData($item, $attributeCode);
         }
+
         return $value;
     }
 
@@ -258,6 +261,7 @@ class Aoe_AvaTax_Helper_Data extends Mage_Core_Helper_Abstract
         if ($attributeCode) {
             $value = $this->getObjectData($item, $attributeCode);
         }
+
         return $value;
     }
 
@@ -268,6 +272,7 @@ class Aoe_AvaTax_Helper_Data extends Mage_Core_Helper_Abstract
         if ($attributeCode) {
             $value = $this->getObjectData($item, $attributeCode);
         }
+
         return $value;
     }
 
@@ -278,6 +283,7 @@ class Aoe_AvaTax_Helper_Data extends Mage_Core_Helper_Abstract
         if ($attributeCode) {
             $value = $this->getObjectData($item, $attributeCode);
         }
+
         return $value;
     }
 
@@ -370,6 +376,7 @@ class Aoe_AvaTax_Helper_Data extends Mage_Core_Helper_Abstract
     public function getMode($store = null)
     {
         $mode = $this->getConfig('mode', $store);
+
         return ($mode === 'production' ? 'production' : 'sandbox');
     }
 
@@ -393,8 +400,8 @@ class Aoe_AvaTax_Helper_Data extends Mage_Core_Helper_Abstract
      *
      * @return Mage_Sales_Model_Quote_Item_Abstract[]
      */
-    public function getActionableQuoteAddressItems(Mage_Sales_Model_Quote_Address $address) {
-
+    public function getActionableQuoteAddressItems(Mage_Sales_Model_Quote_Address $address)
+    {
         /** @var Mage_Sales_Model_Quote_Item_Abstract[] $items */
         $items = $address->getAllItems();
 
@@ -467,7 +474,7 @@ class Aoe_AvaTax_Helper_Data extends Mage_Core_Helper_Abstract
         $extra = array(
             $this->getAccount($store),
             $this->getLicense($store),
-            $this->getMode($store)
+            $this->getMode($store),
         );
 
         $hash = $this->generateHash($request, $extra);
@@ -495,7 +502,7 @@ class Aoe_AvaTax_Helper_Data extends Mage_Core_Helper_Abstract
         $extra = array(
             $this->getAccount($store),
             $this->getLicense($store),
-            $this->getMode($store)
+            $this->getMode($store),
         );
 
         $hash = $this->generateHash($request, $extra);
@@ -586,6 +593,7 @@ class Aoe_AvaTax_Helper_Data extends Mage_Core_Helper_Abstract
                 $data[$k] = $this->recursiveKeySort($v);
             }
         }
+
         return $data;
     }
 
@@ -607,6 +615,7 @@ class Aoe_AvaTax_Helper_Data extends Mage_Core_Helper_Abstract
                 unset($data[$k]);
             }
         }
+
         return $data;
     }
 
