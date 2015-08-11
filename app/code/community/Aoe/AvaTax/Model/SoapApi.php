@@ -52,7 +52,7 @@ class Aoe_AvaTax_Model_SoapApi extends Aoe_AvaTax_Model_Api
         $taxLines = array();
 
         $itemPriceIncludesTax = Mage::getStoreConfigFlag(Mage_Tax_Model_Config::CONFIG_XML_PATH_PRICE_INCLUDES_TAX, $store);
-        foreach ($address->getAllItems() as $k => $item) {
+        foreach ($this->getHelper()->getActionableQuoteAddressItems($address) as $k => $item) {
             /** @var Mage_Sales_Model_Quote_Item|Mage_Sales_Model_Quote_Address_Item $item */
             $itemAmount = $store->roundPrice($itemPriceIncludesTax ? $item->getBaseRowTotalInclTax() : $item->getBaseRowTotal());
             //$itemAmount = $store->roundPrice($item->getBaseRowTotal());
@@ -122,7 +122,7 @@ class Aoe_AvaTax_Model_SoapApi extends Aoe_AvaTax_Model_Api
         $taxLines = array();
 
         $itemPriceIncludesTax = Mage::getStoreConfigFlag(Mage_Tax_Model_Config::CONFIG_XML_PATH_PRICE_INCLUDES_TAX, $store);
-        foreach ($invoice->getAllItems() as $k => $item) {
+        foreach ($this->getHelper()->getActionableInvoiceItems($invoice) as $k => $item) {
             /** @var Mage_Sales_Model_Order_Invoice_Item $item */
             $itemAmount = $store->roundPrice($itemPriceIncludesTax ? $item->getBaseRowTotalInclTax() : $item->getBaseRowTotal());
             $itemAmount -= $store->roundPrice($item->getBaseDiscountAmount());
@@ -232,8 +232,8 @@ class Aoe_AvaTax_Model_SoapApi extends Aoe_AvaTax_Model_Api
         $taxLines = array();
 
         $itemPriceIncludesTax = Mage::getStoreConfigFlag(Mage_Tax_Model_Config::CONFIG_XML_PATH_PRICE_INCLUDES_TAX, $store);
-        foreach ($creditmemo->getAllItems() as $k => $item) {
-            /** @var Mage_Sales_Model_Order_Invoice_Item $item */
+        foreach ($this->getHelper()->getActionableCreditmemoItems($creditmemo) as $k => $item) {
+            /** @var Mage_Sales_Model_Order_Creditmemo_Item $item */
             $itemAmount = $store->roundPrice($itemPriceIncludesTax ? $item->getBaseRowTotalInclTax() : $item->getBaseRowTotal());
             $itemAmount -= $store->roundPrice($item->getBaseDiscountAmount());
             $taxLine = new AvaTax\Line();

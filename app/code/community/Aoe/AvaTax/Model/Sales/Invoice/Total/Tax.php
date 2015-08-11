@@ -22,7 +22,7 @@ class Aoe_AvaTax_Model_Sales_Invoice_Total_Tax extends Mage_Sales_Model_Order_In
         $invoice->setHiddenTaxAmount(0.0);
         $invoice->setBaseHiddenTaxAmount(0.0);
 
-        $items = $invoice->getAllItems();
+        $items = $this->getHelper()->getActionableInvoiceItems($invoice);
 
         // Get taxes via API call
         $api = $this->getHelper()->getApi($store);

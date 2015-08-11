@@ -23,7 +23,7 @@ class Aoe_AvaTax_Model_Sales_Creditmemo_Total_Tax extends Mage_Sales_Model_Order
         $creditmemo->setHiddenTaxAmount(0.0);
         $creditmemo->setBaseHiddenTaxAmount(0.0);
 
-        $items = $creditmemo->getAllItems();
+        $items = $this->getHelper()->getActionableCreditmemoItems($creditmemo);
 
         // Get taxes via API call
         $api = $this->getHelper()->getApi($store);

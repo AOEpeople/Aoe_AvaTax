@@ -223,7 +223,7 @@ class Aoe_AvaTax_Model_RestApi extends Aoe_AvaTax_Model_Api
         $request['Addresses'][] = $this->getAddress('DESTINATION', $address);
 
         $itemPriceIncludesTax = Mage::getStoreConfigFlag(Mage_Tax_Model_Config::CONFIG_XML_PATH_PRICE_INCLUDES_TAX, $store);
-        foreach ($address->getAllItems() as $k => $item) {
+        foreach ($this->getHelper()->getActionableQuoteAddressItems($address) as $k => $item) {
             /** @var Mage_Sales_Model_Quote_Item|Mage_Sales_Model_Quote_Address_Item $item */
             $request['Lines'][] = array(
                 "LineNo"          => $this->limit($k, 50),
@@ -295,7 +295,7 @@ class Aoe_AvaTax_Model_RestApi extends Aoe_AvaTax_Model_Api
         $request['Addresses'][] = $this->getAddress('DESTINATION', $order->getShippingAddress());
 
         $itemPriceIncludesTax = Mage::getStoreConfigFlag(Mage_Tax_Model_Config::CONFIG_XML_PATH_PRICE_INCLUDES_TAX, $store);
-        foreach ($invoice->getAllItems() as $k => $item) {
+        foreach ($this->getHelper()->getActionableInvoiceItems($invoice) as $k => $item) {
             /** @var Mage_Sales_Model_Order_Invoice_Item $item */
             $request['Lines'][] = array(
                 "LineNo"          => $this->limit($k, 50),
@@ -368,7 +368,7 @@ class Aoe_AvaTax_Model_RestApi extends Aoe_AvaTax_Model_Api
         $request['Addresses'][] = $this->getAddress('DESTINATION', $order->getShippingAddress());
 
         $itemPriceIncludesTax = Mage::getStoreConfigFlag(Mage_Tax_Model_Config::CONFIG_XML_PATH_PRICE_INCLUDES_TAX, $store);
-        foreach ($creditmemo->getAllItems() as $k => $item) {
+        foreach ($this->getHelper()->getActionableCreditmemoItems($creditmemo) as $k => $item) {
             /** @var Mage_Sales_Model_Order_Creditmemo_Item $item */
             $request['Lines'][] = array(
                 "LineNo"          => $this->limit($k, 50),

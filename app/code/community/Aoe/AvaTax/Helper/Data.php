@@ -389,6 +389,63 @@ class Aoe_AvaTax_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * @param Mage_Sales_Model_Quote_Address $address
+     *
+     * @return Mage_Sales_Model_Quote_Item_Abstract[]
+     */
+    public function getActionableQuoteAddressItems(Mage_Sales_Model_Quote_Address $address) {
+
+        /** @var Mage_Sales_Model_Quote_Item_Abstract[] $items */
+        $items = $address->getAllItems();
+
+        foreach ($items as $k => $item) {
+            if (($item->getParentItem() && !$item->isChildrenCalculated()) || (!$item->getParentItem() && $item->isChildrenCalculated())) {
+                unset($items[$k]);
+            }
+        }
+
+        return $items;
+    }
+
+    /**
+     * @param Mage_Sales_Model_Order_Invoice $invoice
+     *
+     * @return Mage_Sales_Model_Order_Invoice_Item[]
+     */
+    public function getActionableInvoiceItems(Mage_Sales_Model_Order_Invoice $invoice)
+    {
+        /** @var Mage_Sales_Model_Order_Invoice_Item[] $items */
+        $items = $invoice->getAllItems();
+
+        foreach ($items as $k => $item) {
+            if ($item->getOrderItem()->isDummy()) {
+                unset($items[$k]);
+            }
+        }
+
+        return $items;
+    }
+
+    /**
+     * @param Mage_Sales_Model_Order_Creditmemo $creditmemo
+     *
+     * @return Mage_Sales_Model_Order_Creditmemo_Item[]
+     */
+    public function getActionableCreditmemoItems(Mage_Sales_Model_Order_Creditmemo $creditmemo)
+    {
+        /** @var Mage_Sales_Model_Order_Creditmemo_Item[] $items */
+        $items = $creditmemo->getAllItems();
+
+        foreach ($items as $k => $item) {
+            if ($item->getOrderItem()->isDummy()) {
+                unset($items[$k]);
+            }
+        }
+
+        return $items;
+    }
+
+    /**
      * @param array $data
      * @param array $extra
      *
