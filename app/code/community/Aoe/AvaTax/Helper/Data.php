@@ -469,13 +469,11 @@ class Aoe_AvaTax_Helper_Data extends Mage_Core_Helper_Abstract
      *
      * @return array|false
      */
-    public function loadResult(Mage_Core_Model_Store $store, array $request)
+    public function loadResult(Mage_Core_Model_Store $store, array $request, array $extra = array())
     {
-        $extra = array(
-            $this->getAccount($store),
-            $this->getLicense($store),
-            $this->getMode($store),
-        );
+        $extra[] = $this->getAccount($store);
+        $extra[] = $this->getLicense($store);
+        $extra[] = $this->getMode($store);
 
         $hash = $this->generateHash($request, $extra);
 
@@ -497,13 +495,11 @@ class Aoe_AvaTax_Helper_Data extends Mage_Core_Helper_Abstract
      *
      * @return $this
      */
-    public function saveResult(Mage_Core_Model_Store $store, array $request, array $result)
+    public function saveResult(Mage_Core_Model_Store $store, array $request, array $result, array $extra = array())
     {
-        $extra = array(
-            $this->getAccount($store),
-            $this->getLicense($store),
-            $this->getMode($store),
-        );
+        $extra[] = $this->getAccount($store);
+        $extra[] = $this->getLicense($store);
+        $extra[] = $this->getMode($store);
 
         $hash = $this->generateHash($request, $extra);
 

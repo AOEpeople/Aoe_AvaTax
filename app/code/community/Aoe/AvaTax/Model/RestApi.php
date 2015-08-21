@@ -108,8 +108,7 @@ class Aoe_AvaTax_Model_RestApi extends Aoe_AvaTax_Model_Api
         $requestBody = json_encode($request);
         $resultBody = '';
 
-        $hash = $this->generateHash($request, array($account, $license, $url));
-        $result = $this->loadResult($hash);
+        $result = $this->getHelper()->loadResult($store, $request, array($path));
         if (is_array($result)) {
             return $result;
         }
@@ -137,7 +136,7 @@ class Aoe_AvaTax_Model_RestApi extends Aoe_AvaTax_Model_Api
 
             $this->logRequestResult($store, $request, $result);
 
-            $this->saveResult($hash, $result);
+            $this->getHelper()->saveResult($store, $request, $result, array($path));
 
             return $result;
         } catch (Exception $e) {

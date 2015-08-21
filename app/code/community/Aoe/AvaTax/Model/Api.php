@@ -44,58 +44,6 @@ abstract class Aoe_AvaTax_Model_Api
     }
 
     /**
-     * @param array $data
-     * @param array $extra
-     *
-     * @return string
-     */
-    protected function generateHash(array $data, array $extra = array())
-    {
-        return sha1(json_encode(array($data, $extra)));
-    }
-
-    /**
-     * @param string $hash
-     *
-     * @return array|false
-     */
-    protected function loadResult($hash)
-    {
-        $result = Mage::app()->loadCache('Aoe_AvaTax_CACHE_' . $hash);
-
-        if ($result) {
-            $result = json_decode($result, true);
-        } else {
-            $result = false;
-        }
-
-        return $result;
-    }
-
-    /**
-     * @param string                $hash
-     * @param stdClass|array|string $result
-     *
-     * @return $this
-     */
-
-    protected function saveResult($hash, $result)
-    {
-        $cacheTimeout = max(intval($this->getHelper()->getConfig('api_cache_timeout')), 0);
-
-        if ($cacheTimeout > 0) {
-            Mage::app()->saveCache(
-                (is_string($result) ? $result : json_encode($result)),
-                'Aoe_AvaTax_CACHE_' . $hash,
-                array('Aoe_AvaTax_CACHE'),
-                $cacheTimeout
-            );
-        }
-
-        return $this;
-    }
-
-    /**
      * @param Mage_Core_Model_Store $store
      * @param array|string          $request
      * @param array|string          $result
