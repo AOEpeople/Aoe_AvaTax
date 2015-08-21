@@ -100,6 +100,16 @@
                 </Aoe_AvaTax>
             </modules>
         </translate>
+        <events>
+            <customer_address_validation_after>
+                <observers>
+                    <Aoe_AvaTax>
+                        <class>Aoe_AvaTax/Observer</class>
+                        <method>validateQuoteAddress</method>
+                    </Aoe_AvaTax>
+                </observers>
+            </customer_address_validation_after>
+        </events>
     </frontend>
     <adminhtml>
         <layout>

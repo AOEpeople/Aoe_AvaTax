@@ -2,6 +2,26 @@
 
 class Aoe_AvaTax_Model_Observer
 {
+    /**
+     * @see Mage_Customer_Model_Address_Abstract::validate
+     *
+     * @param Varien_Event_Observer $observer
+     */
+    public function validateQuoteAddress(Varien_Event_Observer $observer)
+    {
+        /** @var Mage_Sales_Model_Quote_Address $address */
+        $address = $observer->getData('address');
+
+        // If the address property of the observer data is not the correct type, exit early
+        if (!$address instanceof Mage_Sales_Model_Quote_Address) {
+            return;
+        }
+
+        /** @var Aoe_AvaTax_Helper_AddressValidator $validator */
+        $validator = Mage::helper('Aoe_AvaTax/AddressValidator');
+        $validator->validate($address);
+    }
+
     public function cleanLog(Mage_Cron_Model_Schedule $schedule)
     {
         foreach (Mage::app()->getStores() as $store) {

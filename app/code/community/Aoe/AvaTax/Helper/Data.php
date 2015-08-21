@@ -16,6 +16,26 @@ class Aoe_AvaTax_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * @param mixed $store
+     *
+     * @return bool
+     */
+    public function isAddressValidationActive($store = null)
+    {
+        return $this->isActive($store) && $this->getConfigFlag('address_validation_active', $store);
+    }
+
+    /**
+     * @param mixed $store
+     *
+     * @return bool
+     */
+    public function isAddressNormalizationActive($store = null)
+    {
+        return $this->isAddressValidationActive($store) && $this->getConfigFlag('address_normalization_active', $store);
+    }
+
+    /**
      * @param Mage_Core_Model_Store $store
      *
      * @return Aoe_AvaTax_Model_Api
