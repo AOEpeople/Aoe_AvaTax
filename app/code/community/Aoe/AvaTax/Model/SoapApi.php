@@ -478,6 +478,16 @@ class Aoe_AvaTax_Model_SoapApi extends Aoe_AvaTax_Model_Api
         return $this->addressService[$store->getId()];
     }
 
+    /**
+     * Limit the length of a string
+     *
+     * NB: This also trims $value before limiting
+     *
+     * @param string $value
+     * @param int    $limit
+     *
+     * @return string
+     */
     protected function limit($value, $limit = 0)
     {
         $value = trim($value);
