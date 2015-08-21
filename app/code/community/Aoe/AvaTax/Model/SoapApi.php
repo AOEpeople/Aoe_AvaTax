@@ -7,7 +7,12 @@ class Aoe_AvaTax_Model_SoapApi extends Aoe_AvaTax_Model_Api
     /**
      * @var AvaTax\TaxServiceSoap[]
      */
-    protected $apis = array();
+    protected $taxService = array();
+
+    /**
+     * @var AvaTax\AddressServiceSoap[]
+     */
+    protected $addressService = array();
 
     public function callGetTaxForQuote(Mage_Sales_Model_Quote $quote)
     {
@@ -327,7 +332,7 @@ class Aoe_AvaTax_Model_SoapApi extends Aoe_AvaTax_Model_Api
         if ($resultData === false) {
             $resultData = array();
             try {
-                $result = $this->getApi($store)->getTax($request);
+                $result = $this->getTaxService($store)->getTax($request);
                 $resultData = $helper->normalizeGetTaxResult($result);
                 $helper->logRequestResult($store, $requestData, $resultData);
             } catch (Exception $e) {
@@ -356,7 +361,7 @@ class Aoe_AvaTax_Model_SoapApi extends Aoe_AvaTax_Model_Api
         if ($resultData === false) {
             $resultData = array();
             try {
-                $result = $this->getApi($store)->cancelTax($request);
+                $result = $this->getTaxService($store)->cancelTax($request);
                 $resultData = $helper->normalizeCancelTaxResult($result);
                 $helper->logRequestResult($store, $requestData, $resultData);
             } catch (Exception $e) {
@@ -377,7 +382,7 @@ class Aoe_AvaTax_Model_SoapApi extends Aoe_AvaTax_Model_Api
         $requestData = $helper->normalizeGetTaxHistoryRequest($request);
         $resultData = array();
         try {
-            $result = $this->getApi($store)->getTaxHistory($request);
+            $result = $this->getTaxService($store)->getTaxHistory($request);
             $resultData = $helper->normalizeGetTaxHistoryResult($result);
             $helper->logRequestResult($store, $requestData, $resultData);
         } catch (Exception $e) {
@@ -420,9 +425,9 @@ class Aoe_AvaTax_Model_SoapApi extends Aoe_AvaTax_Model_Api
      *
      * @return \AvaTax\TaxServiceSoap
      */
-    protected function getApi(Mage_Core_Model_Store $store)
+    protected function getTaxService(Mage_Core_Model_Store $store)
     {
-        if (!isset($this->apis[$store->getId()])) {
+        if (!isset($this->taxService[$store->getId()])) {
             /** @var Aoe_AvaTax_Helper_Data $helper */
             $helper = Mage::helper('Aoe_AvaTax/Data');
 
@@ -438,10 +443,39 @@ class Aoe_AvaTax_Model_SoapApi extends Aoe_AvaTax_Model_Api
 
             $api = new AvaTax\TaxServiceSoap('store-' . $store->getId());
 
-            $this->apis[$store->getId()] = $api;
+            $this->taxService[$store->getId()] = $api;
         }
 
-        return $this->apis[$store->getId()];
+        return $this->taxService[$store->getId()];
+    }
+
+    /**
+     * @param Mage_Core_Model_Store $store
+     *
+     * @return \AvaTax\AddressServiceSoap
+     */
+    protected function getAddressService(Mage_Core_Model_Store $store)
+    {
+        if (!isset($this->addressService[$store->getId()])) {
+            /** @var Aoe_AvaTax_Helper_Data $helper */
+            $helper = Mage::helper('Aoe_AvaTax/Data');
+
+            new AvaTax\ATConfig(
+                'store-' . $store->getId(),
+                array(
+                    'url'     => $helper->getConfig($helper->getConfig('mode', $store) . '_url', $store),
+                    'account' => $helper->getConfig('account', $store),
+                    'license' => $helper->getConfig('license', $store),
+                    'trace'   => $helper->getConfigFlag('debug', $store),
+                )
+            );
+
+            $api = new AvaTax\AddressServiceSoap('store-' . $store->getId());
+
+            $this->addressService[$store->getId()] = $api;
+        }
+
+        return $this->addressService[$store->getId()];
     }
 
     protected function limit($value, $limit = 0)
