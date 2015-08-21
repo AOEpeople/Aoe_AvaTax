@@ -2,6 +2,8 @@
 
 abstract class Aoe_AvaTax_Model_Api
 {
+    abstract public function callValidateQuoteAddress(Mage_Sales_Model_Quote_Address $address);
+
     abstract public function callGetTaxForQuote(Mage_Sales_Model_Quote $quote);
 
     abstract public function callGetTaxForInvoice(Mage_Sales_Model_Order_Invoice $invoice, $commit = false);

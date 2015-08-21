@@ -5,6 +5,96 @@ require_once dirname(__FILE__) . '/../autoloader.php';
 class Aoe_AvaTax_Helper_Soap extends Aoe_AvaTax_Helper_Data
 {
     /**
+     * @param \AvaTax\ValidateRequest $soapRequest
+     *
+     * @return array
+     */
+    public function normalizeValidateRequest(AvaTax\ValidateRequest $soapRequest)
+    {
+        $soapAddress = $soapRequest->getAddress();
+
+        $request = array(
+            'Address'     => array(
+                'Line1'      => ($soapAddress ? $soapAddress->getLine1() : ''),
+                'Line2'      => ($soapAddress ? $soapAddress->getLine2() : ''),
+                'Line3'      => ($soapAddress ? $soapAddress->getLine3() : ''),
+                'City'       => ($soapAddress ? $soapAddress->getCity() : ''),
+                'Region'     => ($soapAddress ? $soapAddress->getRegion() : ''),
+                'Country'    => ($soapAddress ? $soapAddress->getCountry() : ''),
+                'PostalCode' => ($soapAddress ? $soapAddress->getPostalCode() : ''),
+            ),
+            'TextCase'    => $soapRequest->getTextCase(),
+            'Coordinates' => $soapRequest->getCoordinates(),
+        );
+
+        return $this->recursiveKeySort($request);
+    }
+
+    /**
+     * @param \AvaTax\ValidateResult $soapResult
+     *
+     * @return array
+     */
+    public function normalizeValidateResult(AvaTax\ValidateResult $soapResult)
+    {
+        $isDevMode = Mage::getIsDeveloperMode();
+        if ($isDevMode) {
+            Mage::setIsDeveloperMode(false);
+        }
+
+        $result = array(
+            'TransactionId'  => $soapResult->getTransactionId(),
+            'ResultCode'     => $soapResult->getResultCode(),
+            'ValidAddresses' => array(),
+            'Messages'       => array(),
+            'Taxable'        => (bool)$soapResult->isTaxable(),
+        );
+
+        if ($soapResult->getResultCode() === 'Success') {
+            foreach ($soapResult->getValidAddresses() as $validAddress) {
+                /** @var AvaTax\ValidAddress $validAddress */
+                $result['ValidAddresses'][] = array(
+                    'Line1'        => $validAddress->getLine1(),
+                    'Line2'        => $validAddress->getLine2(),
+                    'Line3'        => $validAddress->getLine3(),
+                    'Line4'        => $validAddress->getLine4(),
+                    'City'         => $validAddress->getCity(),
+                    'County'       => $validAddress->getCounty(),
+                    'Region'       => $validAddress->getRegion(),
+                    'PostalCode'   => $validAddress->getPostalCode(),
+                    'Country'      => $validAddress->getCountry(),
+                    'TaxRegionId'  => $validAddress->getTaxRegionId(),
+                    'Latitude'     => $validAddress->getLatitude(),
+                    'Longitude'    => $validAddress->getLongitude(),
+                    'FipsCode'     => $validAddress->getFipsCode(),
+                    'CarrierRoute' => $validAddress->getCarrierRoute(),
+                    'PostNet'      => $validAddress->getPostNet(),
+                    'AddressType'  => $validAddress->getAddressType(),
+                );
+            }
+        } else {
+            foreach ($soapResult->getMessages() as $message) {
+                /** @var AvaTax\Message $message */
+                $result['Messages'][] = array(
+                    'Summary'  => $message->getSummary(),
+                    'Details'  => $message->getDetails(),
+                    'HelpLink' => $message->getHelpLink(),
+                    'RefersTo' => $message->getRefersTo(),
+                    'Severity' => $message->getSeverity(),
+                    'Source'   => $message->getSource(),
+                    'Name'     => $message->getName(),
+                );
+            }
+        }
+
+        if ($isDevMode) {
+            Mage::setIsDeveloperMode(true);
+        }
+
+        return $this->recursiveKeySort($result);
+    }
+
+    /**
      * @param \AvaTax\GetTaxRequest $soapRequest
      *
      * @return array

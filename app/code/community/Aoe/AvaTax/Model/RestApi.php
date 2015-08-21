@@ -2,6 +2,13 @@
 
 class Aoe_AvaTax_Model_RestApi extends Aoe_AvaTax_Model_Api
 {
+    public function callValidateQuoteAddress(Mage_Sales_Model_Quote_Address $address)
+    {
+        $request = $this->createValidateRequestFromQuoteAddress($address);
+        $request = $this->prepareValidateRequest($request);
+        return $this->call($address->getQuote()->getStore(), '1.0/address/validate', $request);
+    }
+
     public function callGetTaxForQuote(Mage_Sales_Model_Quote $quote)
     {
         $request = $this->createTaxRequestFromQuoteAddress($quote->getShippingAddress());
@@ -189,6 +196,11 @@ class Aoe_AvaTax_Model_RestApi extends Aoe_AvaTax_Model_Api
         }
 
         return $data;
+    }
+
+    protected function createValidateRequestFromQuoteAddress(Mage_Sales_Model_Quote_Address $address)
+    {
+        return $this->getAddress(null, $address);
     }
 
     protected function createTaxRequestFromQuoteAddress(Mage_Sales_Model_Quote_Address $address)
@@ -413,6 +425,14 @@ class Aoe_AvaTax_Model_RestApi extends Aoe_AvaTax_Model_Api
 
         // Sort by key
         $request = $this->recursiveKeySort($request);
+
+        return $request;
+    }
+
+    protected function prepareValidateRequest(array $request)
+    {
+        // Filter out empty data
+        $request = $this->prepareRequest($request, true, true);
 
         return $request;
     }

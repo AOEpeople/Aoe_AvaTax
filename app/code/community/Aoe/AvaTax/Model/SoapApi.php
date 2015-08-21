@@ -14,6 +14,22 @@ class Aoe_AvaTax_Model_SoapApi extends Aoe_AvaTax_Model_Api
      */
     protected $addressService = array();
 
+    public function callValidateQuoteAddress(Mage_Sales_Model_Quote_Address $address)
+    {
+        /** @var Aoe_AvaTax_Helper_Soap $helper */
+        $helper = Mage::helper('Aoe_AvaTax/Soap');
+
+        $request = new AvaTax\ValidateRequest(
+            $this->getAddress($address),
+            \AvaTax\TextCase::$Mixed,
+            true
+        );
+
+        $request->setTaxability(true);
+
+        return $this->callValidate($address->getQuote()->getStore(), $request);
+    }
+
     public function callGetTaxForQuote(Mage_Sales_Model_Quote $quote)
     {
         /** @var Aoe_AvaTax_Helper_Soap $helper */
@@ -314,6 +330,35 @@ class Aoe_AvaTax_Model_SoapApi extends Aoe_AvaTax_Model_Api
         $request->setCancelCode(AvaTax\CancelCode::$DocDeleted);
 
         return $this->callCancelTax($creditmemo->getStore(), $request);
+    }
+
+    /**
+     * @param \AvaTax\ValidateRequest $request
+     *
+     * @return array
+     * @throws Exception
+     */
+    protected function callValidate(Mage_Core_Model_Store $store, AvaTax\ValidateRequest $request)
+    {
+        /** @var Aoe_AvaTax_Helper_Soap $helper */
+        $helper = Mage::helper('Aoe_AvaTax/Soap');
+
+        $requestData = $helper->normalizeValidateRequest($request);
+        $resultData = $helper->loadResult($store, $requestData);
+        if ($resultData === false) {
+            $resultData = array();
+            try {
+                $result = $this->getAddressService($store)->validate($request);
+                $resultData = $helper->normalizeValidateResult($result);
+                $helper->logRequestResult($store, $requestData, $resultData);
+            } catch (Exception $e) {
+                $helper->logRequestException($store, $requestData, $resultData, $e);
+                throw $e;
+            }
+            $helper->saveResult($store, $requestData, $resultData);
+        }
+
+        return $resultData;
     }
 
     /**
