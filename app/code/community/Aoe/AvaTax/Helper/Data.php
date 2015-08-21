@@ -539,8 +539,8 @@ class Aoe_AvaTax_Helper_Data extends Mage_Core_Helper_Abstract
             $log->setCreatedAt(new Zend_Db_Expr('NOW()'));
             $log->setStore($store);
             $log->setUrl($this->getUrl($store));
-            $log->setRequestBody(json_encode($request));
-            $log->setResultBody(json_encode($result));
+            $log->setRequestBody(json_encode($request, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+            $log->setResultBody(json_encode($result, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
             $log->setResultCode(isset($result['ResultCode']) ? $result['ResultCode'] : '');
             $log->save();
         } catch (Exception $e) {
@@ -562,8 +562,8 @@ class Aoe_AvaTax_Helper_Data extends Mage_Core_Helper_Abstract
             $log->setCreatedAt(new Zend_Db_Expr('NOW()'));
             $log->setStore($store);
             $log->setUrl($this->getUrl($store));
-            $log->setRequestBody(json_encode($request));
-            $log->setResultBody(json_encode($result));
+            $log->setRequestBody(json_encode($request, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+            $log->setResultBody(json_encode($result, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
             $log->setFailureMessage($exception->getMessage());
             $log->setResultCode(Aoe_AvaTax_Model_Log::CODE_FAILURE);
             $log->save();
