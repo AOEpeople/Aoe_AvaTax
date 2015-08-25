@@ -14,7 +14,7 @@
  */
 namespace AvaTax;
 
-class GetTaxResult
+class GetTaxResult extends BaseResult
 {
     /** @var string */
     private $DocCode;
@@ -46,22 +46,20 @@ class GetTaxResult
     private $TotalTaxable;
     /** @var number */
     private $TotalTax;
+    /** @var number */
+    private $TotalTaxCalculated;
+    /** @var int */
+    private $HashCode;
     /** @var int */
     private $AdjustmentReason;
     /** @var int */
     private $Version;
     /** @var \stdClass */
+    private $TaxSummary;
+    /** @var \stdClass */
     private $TaxLines;
     /** @var  \stdClass */
     private $TaxAddresses;
-
-    //@author:swetal
-    //Added new properties to upgrade to 5.3 interface
-    /** @var number */
-    private $TotalTaxCalculated;
-    /** @var \stdClass */
-    private $TaxSummary;
-
 
     /**
      * Gets the internal reference code used by the client application. This is used for operations such as Post and GetTaxHistory.
@@ -280,7 +278,7 @@ class GetTaxResult
      */
     public function getTaxLines()
     {
-        return Utils::EnsureIsArray($this->TaxLines->TaxLine);
+        return (isset($this->TaxLines->TaxLine) ? Utils::EnsureIsArray($this->TaxLines->TaxLine) : []);
     }
 
     /**
@@ -290,7 +288,7 @@ class GetTaxResult
      */
     public function getTaxAddresses()
     {
-        return Utils::EnsureIsArray($this->TaxAddresses->TaxAddress);
+        return (isset($this->TaxAddresses->TaxAddress) ? Utils::EnsureIsArray($this->TaxAddresses->TaxAddress) : []);
     }
 
     /**
@@ -312,7 +310,7 @@ class GetTaxResult
      */
     public function getTaxSummary()
     {
-        return Utils::EnsureIsArray($this->TaxSummary->TaxDetail);
+        return (isset($this->TaxSummary->TaxDetail) ? Utils::EnsureIsArray($this->TaxSummary->TaxDetail) : []);
     }
 
     /**
@@ -322,60 +320,10 @@ class GetTaxResult
      */
     public function getTaxLine($lineNo)
     {
-        if ($this->getTaxLines() != null) {
-            foreach ($this->getTaxLines() as $taxLine) {
-                if ($lineNo == $taxLine->getNo()) {
-                    return $taxLine;
-                }
+        foreach ($this->getTaxLines() as $taxLine) {
+            if ($lineNo == $taxLine->getNo()) {
+                return $taxLine;
             }
         }
-    }
-
-
-
-    /////////////////////////////////////////////PHP bug requires this copy from BaseResult ///////////
-    /**
-     * @var string
-     */
-    private $TransactionId;
-    /**
-     * @var string must be one of the values defined in {@link SeverityLevel}.
-     */
-    private $ResultCode = 'Success';
-    /**
-     * @var array of Message.
-     */
-    private $Messages = array();
-
-    /**
-     * Accessor
-     *
-     * @return string
-     */
-    public function getTransactionId()
-    {
-        return $this->TransactionId;
-    }
-
-    /**
-     * Accessor
-     *
-     * @see \AvaTax\SeverityLevel
-     *
-     * @return string
-     */
-    public function getResultCode()
-    {
-        return $this->ResultCode;
-    }
-
-    /**
-     * Accessor
-     *
-     * @return \AvaTax\Message[]
-     */
-    public function getMessages()
-    {
-        return Utils::EnsureIsArray($this->Messages->Message);
     }
 }

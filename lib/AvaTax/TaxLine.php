@@ -144,7 +144,7 @@ class TaxLine
      */
     public function getTaxDetails()
     {
-        return Utils::EnsureIsArray($this->TaxDetails->TaxDetail);
+        return (isset($this->TaxDetails->TaxDetail) ? Utils::EnsureIsArray($this->TaxDetails->TaxDetail) : []);
     }
 
     /**
