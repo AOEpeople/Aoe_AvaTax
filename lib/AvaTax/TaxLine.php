@@ -2,129 +2,186 @@
 /**
  * TaxLine.class.php
  */
- 
- /**
+
+/**
  * Contains Tax data; Retunded form {@link AddressServiceSoap#getTax};
  * Also part of the {@link GetTaxRequest}
  * result returned from the {@link TaxServiceSoap#getTax} tax calculation service;
- * 
+ *
  * @author    Avalara
  * @copyright © 2004 - 2011 Avalara, Inc.  All rights reserved.
  * @package   Tax
  */
 namespace AvaTax;
+
 class TaxLine
 {
+    private $No; //string
+    private $TaxCode; //string
+    private $Taxability; //boolean
+    private $BoundaryLevel; //BoundaryLevel
+    private $Exemption; //decimal
+    private $Discount; //decimal
+    private $Taxable; //decimal
+    private $Rate; //decimal
+    private $Tax; //decimal
+    private $ExemptCertId; //int
+    private $TaxDetails; //ArrayOfTaxDetail
 
-	private $No; //string 
-	private $TaxCode; //string 
-	private $Taxability; //boolean 
-	private $BoundaryLevel; //BoundaryLevel 
-	private $Exemption; //decimal 
-	private $Discount; //decimal 
-	private $Taxable; //decimal 
-	private $Rate; //decimal 
-	private $Tax; //decimal 
-	private $ExemptCertId; //int 
-	private $TaxDetails; //ArrayOfTaxDetail
-	
-	//@author:swetal
-	//added following properties to upgrade to 5.3 interface
-	private $TaxCalculated;	//decimal
-	private $ReportingDate;	//date
-	private $AccountingMethod;//String
-	
-	private $TaxIncluded;		//boolean
-	
-/**
- * Accessor
- * @return string
- */
-    public function getNo() { return $this->No; }	
-	
-	
-	/**
- * Accessor
- * @return string
- */
-    public function getTaxCode() { return $this->TaxCode; }	
-	/**
- * Accessor
- * @return boolean
- */
-    public function getTaxability() { return $this->Taxability; }	
-	/**
- * Accessor
- * @see BoundaryLevel
- * @return string
- */
-    public function getBoundaryLevel() { return $this->BoundaryLevel; }	
-	/**
- * Accessor
- * @return decimal
- */
-    public function getExemption() { return $this->Exemption; }	
-	/**
- * Accessor
- * @return decimal
- */
-    public function getDiscount() { return $this->Discount; }	
-	/**
- * Accessor
- * @return decimal
- */
-    public function getTaxable() { return $this->Taxable; }	
-/**
- * Accessor
- * @return decimal
- */
-    public function getRate() { return $this->Rate; }	
-	/**
- * Accessor
- * @return string
- */
-    public function getTax() { return $this->Tax; }
-	
+    //@author:swetal
+    //added following properties to upgrade to 5.3 interface
+    private $TaxCalculated;    //decimal
+    private $ReportingDate;    //date
+    private $AccountingMethod;//String
 
-	/**
- * Accessor
- * @return decimal
- */
-    public function getTaxDetails() { return Utils::EnsureIsArray($this->TaxDetails->TaxDetail); }	
-	
-		
-	/**
- * Accessor
- * @return int
- */
-    public function getExemptCertId() { return $this->ExemptCertId; }
-    
+    private $TaxIncluded;        //boolean
+
     /**
- * Accessor
- * @return decimal
- */
-	public function getTaxCalculated(){ return $this->TaxCalculated; }	//decimalt
-	public function getReportingDate(){ return $this->ReportingDate;}	//date
-	public function getAccountingMethod(){ return $this->AccountingMethod;}//String
-	
-	/**
-	 * True if tax is included in the line.
-	 * @param boolean	 
-	 */
-	public function setTaxIncluded($value)
-	{
-		$this->TaxIncluded=$value;
-	}
-	
-	/**
-	 * True if tax is included in the line.
-	 * @return boolean	 
-	 */
-	public function getTaxIncluded()
-	{
-		return $this->TaxIncluded;
-	}
-    
-    
+     * Accessor
+     *
+     * @return string
+     */
+    public function getNo()
+    {
+        return $this->No;
+    }
 
+    /**
+     * Accessor
+     *
+     * @return string
+     */
+    public function getTaxCode()
+    {
+        return $this->TaxCode;
+    }
+
+    /**
+     * Accessor
+     *
+     * @return boolean
+     */
+    public function getTaxability()
+    {
+        return $this->Taxability;
+    }
+
+    /**
+     * Accessor
+     *
+     * @see \AvaTax\BoundaryLevel
+     * @return string
+     */
+    public function getBoundaryLevel()
+    {
+        return $this->BoundaryLevel;
+    }
+
+    /**
+     * Accessor
+     *
+     * @return number
+     */
+    public function getExemption()
+    {
+        return $this->Exemption;
+    }
+
+    /**
+     * Accessor
+     *
+     * @return number
+     */
+    public function getDiscount()
+    {
+        return $this->Discount;
+    }
+
+    /**
+     * Accessor
+     *
+     * @return number
+     */
+    public function getTaxable()
+    {
+        return $this->Taxable;
+    }
+
+    /**
+     * Accessor
+     *
+     * @return number
+     */
+    public function getRate()
+    {
+        return $this->Rate;
+    }
+
+    /**
+     * Accessor
+     *
+     * @return number
+     */
+    public function getTax()
+    {
+        return $this->Tax;
+    }
+
+    /**
+     * Accessor
+     *
+     * @return number
+     */
+    public function getTaxCalculated()
+    {
+        return $this->TaxCalculated;
+    }
+
+    /**
+     * Accessor
+     *
+     * @return \AvaTax\TaxDetail[]
+     */
+    public function getTaxDetails()
+    {
+        return Utils::EnsureIsArray($this->TaxDetails->TaxDetail);
+    }
+
+    /**
+     * Accessor
+     *
+     * @return int
+     */
+    public function getExemptCertId()
+    {
+        return $this->ExemptCertId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getReportingDate()
+    {
+        return $this->ReportingDate;
+    }
+
+    /**
+     * @see \AvaTax\AccountingMethod
+     *
+     * @return string
+     */
+    public function getAccountingMethod()
+    {
+        return $this->AccountingMethod;
+    }
+
+    /**
+     * True if tax is included in the line.
+     *
+     * @return boolean
+     */
+    public function getTaxIncluded()
+    {
+        return $this->TaxIncluded;
+    }
 }
