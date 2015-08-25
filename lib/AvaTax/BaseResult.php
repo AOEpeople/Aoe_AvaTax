@@ -1,39 +1,63 @@
 <?php
-/** 
+/**
  * BaseResult.class.php
  */
- 
- /**
+
+/**
  * The base class for result objects that return a ResultCode and Messages collection -- There is no reason for clients to create these.
  *
  * @author    Avalara
  * @copyright © 2004 - 2011 Avalara, Inc.  All rights reserved.
  * @package   Base
  */
- 
-namespace AvaTax;  
-class BaseResult
+
+namespace AvaTax;
+
+abstract class BaseResult
 {
+    /**
+     * @var string
+     */
+    protected $TransactionId;
 
-//@author:swetal
-//Removed declarations of variable as it was creating problem due to bug in SoapClient
+    /**
+     * @var string must be one of the values defined in {@link SeverityLevel}.
+     */
+    protected $ResultCode;
 
-/**
- * A unique Transaction ID identifying a specific request/response set.
- * @return string
- */
-    public function getTransactionId() { return $this->TransactionId; }
-	
-	public function getDocId() { return $this->DocId; }
-/**
- * Indicates whether operation was successfully completed or not.
- * @return string
- */
-    public function getResultCode() { return $this->ResultCode; }
-/**
- * Accessor
- * @return array
- */
-    public function getMessages() { return Utils::EnsureIsArray($this->Messages->Message); }
+    /**
+     * @var \stdClass
+     */
+    protected $Messages;
+
+    /**
+     * A unique Transaction ID identifying a specific request/response set.
+     *
+     * @return string
+     */
+    public function getTransactionId()
+    {
+        return $this->TransactionId;
+    }
+
+    /**
+     * Indicates whether operation was successfully completed or not.
+     *
+     * @see \AvaTax\SeverityLevel
+     *
+     * @return string
+     */
+    public function getResultCode()
+    {
+        return $this->ResultCode;
+    }
+
+    /**
+     * @return \AvaTax\Message[]
+     */
+    public function getMessages()
+    {
+        return (isset($this->Messages->Message) ? Utils::EnsureIsArray($this->Messages->Message) : []);
+    }
 
 }
