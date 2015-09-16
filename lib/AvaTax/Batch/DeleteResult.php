@@ -4,13 +4,13 @@
  */
 
 /**
- * 
+ *
  *
  * @author    Avalara
  * @copyright © 2004 - 2011 Avalara, Inc.  All rights reserved.
  * @package   Batch
  */
 namespace Avatax\Batch;
-class DeleteResult extends BaseResult {
+class DeleteResult extends \Avatax\BaseResult {
 
 }

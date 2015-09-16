@@ -4,14 +4,14 @@
  */
 
 /**
- * 
+ *
  *
  * @author    Avalara
  * @copyright © 2004 - 2011 Avalara, Inc.  All rights reserved.
  * @package   Batch
  */
 namespace Avatax\Batch;
-class BatchFetchResult extends BaseResult {
+class BatchFetchResult extends \Avatax\BaseResult {
   private $Batches; // ArrayOfBatch
   private $RecordCount; // int
 

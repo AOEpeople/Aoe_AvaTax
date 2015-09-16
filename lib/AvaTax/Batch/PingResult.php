@@ -4,14 +4,14 @@
  */
 
 /**
- * 
+ *
  *
  * @author    Avalara
  * @copyright © 2004 - 2011 Avalara, Inc.  All rights reserved.
  * @package   Batch
  */
 namespace Avatax\Batch;
-class PingResult extends BaseResult
+class PingResult extends \Avatax\BaseResult
  {
   private $Version; // string
 
@@ -29,5 +29,5 @@ class PingResult extends BaseResult
  * @return array
  */
     //public function getMessages() { return EnsureIsArray($this->Messages->Message);}
-  
+
 }

@@ -4,14 +4,14 @@
  */
 
 /**
- * 
+ *
  *
  * @author    Avalara
  * @copyright © 2004 - 2011 Avalara, Inc.  All rights reserved.
  * @package   Batch
  */
 namespace Avatax\Batch;
-class BatchSaveResult extends BaseResult {
+class BatchSaveResult extends \Avatax\BaseResult {
   private $BatchId; // int
   private $EstimatedCompletion; // dateTime
 
