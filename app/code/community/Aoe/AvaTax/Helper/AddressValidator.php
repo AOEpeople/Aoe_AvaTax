@@ -42,50 +42,54 @@ class Aoe_AvaTax_Helper_AddressValidator
 
         $result = $helper->getApi($store)->callValidateQuoteAddress($address);
         if ($result['ResultCode'] === 'Success') {
-            if ($helper->isAddressNormalizationActive($store)) {
-                $validAddress = reset($result['ValidAddresses']);
-                if (is_array($validAddress)) {
-                    // Define which fields are track regarding normalization notifications
-                    $trackedFields = array('street', 'city', 'region_id', 'postcode', 'country_id');
+            $validAddress = reset($result['ValidAddresses']);
+            if (is_array($validAddress) && $validAddress['Country'] !== $address->getCountryId()) {
+                // If the validation resulted in a country change then treat that as a failure
+                $address->addError($helper->__('Could not validate address.'));
 
-                    // Generate the pre-normalization values
-                    $startData = array();
-                    foreach ($trackedFields as $field) {
-                        $startData[$field] = $address->getData($field);
+                return;
+            }
+            if ($helper->isAddressNormalizationActive($store) && is_array($validAddress)) {
+                // Define which fields are track regarding normalization notifications
+                $trackedFields = array('street', 'city', 'region_id', 'postcode', 'country_id');
+
+                // Generate the pre-normalization values
+                $startData = array();
+                foreach ($trackedFields as $field) {
+                    $startData[$field] = $address->getData($field);
+                }
+
+                // Find the region model by country and region code
+                /** @var Mage_Directory_Model_Region $regionModel */
+                $regionModel = Mage::getModel('directory/region')->loadByCode($validAddress['Region'], $validAddress['Country']);
+
+                // Update the address with the received values - These may be identical
+                $address->setStreetFull(
+                    array(
+                        $validAddress['Line1'],
+                        $validAddress['Line2'],
+                        $validAddress['Line3'],
+                    )
+                );
+                $address->setCity($validAddress['City']);
+                $address->setRegionId($regionModel->getId());
+                $address->setPostcode($validAddress['PostalCode']);
+                $address->setCountryId($validAddress['Country']);
+
+                // Check if any of the tracked fields were changed
+                $normalized = false;
+                foreach ($trackedFields as $field) {
+                    if ($startData[$field] !== $address->getData($field)) {
+                        $normalized = true;
+                        break;
                     }
+                }
 
-                    // Find the region model by country and region code
-                    /** @var Mage_Directory_Model_Region $regionModel */
-                    $regionModel = Mage::getModel('directory/region')->loadByCode($validAddress['Region'], $validAddress['Country']);
-
-                    // Update the address with the received values - These may be identical
-                    $address->setStreetFull(
-                        array(
-                            $validAddress['Line1'],
-                            $validAddress['Line2'],
-                            $validAddress['Line3'],
-                        )
-                    );
-                    $address->setCity($validAddress['City']);
-                    $address->setRegionId($regionModel->getId());
-                    $address->setPostcode($validAddress['PostalCode']);
-                    $address->setCountryId($validAddress['Country']);
-
-                    // Check if any of the tracked fields were changed
-                    $normalized = false;
-                    foreach ($trackedFields as $field) {
-                        if ($startData[$field] !== $address->getData($field)) {
-                            $normalized = true;
-                            break;
-                        }
-                    }
-
-                    // Store the was_normalized flag on the address
-                    if ($normalized) {
-                        // We only set the flag if it is true to prevent loss of a previous setting of the value
-                        // This happens if validate is called 2+ times on an address
-                        $address->setData('was_normalized', true);
-                    }
+                // Store the was_normalized flag on the address
+                if ($normalized) {
+                    // We only set the flag if it is true to prevent loss of a previous setting of the value
+                    // This happens if validate is called 2+ times on an address
+                    $address->setData('was_normalized', true);
                 }
             }
         } else {
