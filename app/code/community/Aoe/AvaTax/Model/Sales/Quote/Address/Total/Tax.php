@@ -188,6 +188,17 @@ class Aoe_AvaTax_Model_Sales_Quote_Address_Total_Tax extends Mage_Tax_Model_Sale
             )
         );
 
+        $displayShipping = ($this->_config->displayCartShippingInclTax($store) ? $address->getShippingInclTax() : $address->getShippingAmount());
+        $address->addTotal(
+            array(
+                'code'           => 'shipping',
+                'title'          => Mage::helper('sales')->__('Shipping'),
+                'value'          => $displayShipping,
+                'value_incl_tax' => $address->getShippingInclTax(),
+                'value_excl_tax' => $address->getShippingAmount(),
+            )
+        );
+
         return $this;
     }
 
