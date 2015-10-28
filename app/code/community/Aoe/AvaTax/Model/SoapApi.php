@@ -27,6 +27,8 @@ class Aoe_AvaTax_Model_SoapApi extends Aoe_AvaTax_Model_Api
 
         $request->setTaxability(true);
 
+        Mage::dispatchEvent('aoe_avatax_soapapi_validate_quote_address_before', array('request' => $request, 'address' => $address));
+
         return $this->callValidate($address->getQuote()->getStore(), $request);
     }
 
@@ -111,6 +113,8 @@ class Aoe_AvaTax_Model_SoapApi extends Aoe_AvaTax_Model_Api
 
         $request->setLines($taxLines);
 
+        Mage::dispatchEvent('aoe_avatax_soapapi_get_tax_for_quote_before', array('request' => $request, 'quote' => $quote));
+
         // TODO: Handle giftwrapping
 
         return $this->callGetTax($store, $request);
@@ -179,6 +183,8 @@ class Aoe_AvaTax_Model_SoapApi extends Aoe_AvaTax_Model_Api
 
         $request->setLines($taxLines);
 
+        Mage::dispatchEvent('aoe_avatax_soapapi_get_tax_for_invoice_before', array('request' => $request, 'invoice' => $invoice));
+
         // TODO: Handle giftwrapping
 
         $result = $this->callGetTax($store, $request);
@@ -211,6 +217,8 @@ class Aoe_AvaTax_Model_SoapApi extends Aoe_AvaTax_Model_Api
         $request->setDocCode($this->limit($helper->getInvoiceDocCode($invoice), 50));
         $request->setCancelCode(AvaTax\CancelCode::$DocVoided);
 
+        Mage::dispatchEvent('aoe_avatax_soapapi_void_tax_for_invoice_before', array('request' => $request, 'invoice' => $invoice));
+
         return $this->callCancelTax($invoice->getStore(), $request);
     }
 
@@ -221,6 +229,8 @@ class Aoe_AvaTax_Model_SoapApi extends Aoe_AvaTax_Model_Api
         $request->setDocType(AvaTax\DocumentType::$SalesInvoice);
         $request->setDocCode($this->limit($this->getHelper()->getInvoiceDocCode($invoice), 50));
         $request->setCancelCode(AvaTax\CancelCode::$DocDeleted);
+
+        Mage::dispatchEvent('aoe_avatax_soapapi_delete_tax_for_invoice_before', array('request' => $request, 'invoice' => $invoice));
 
         return $this->callCancelTax($invoice->getStore(), $request);
     }
@@ -303,6 +313,8 @@ class Aoe_AvaTax_Model_SoapApi extends Aoe_AvaTax_Model_Api
             $request->setTaxOverride($override);
         }
 
+        Mage::dispatchEvent('aoe_avatax_soapapi_get_tax_for_creditmemo_before', array('request' => $request, 'creditmemo' => $creditmemo));
+
         // TODO: Handle giftwrapping
 
         $result = $this->callGetTax($store, $request);
@@ -332,6 +344,8 @@ class Aoe_AvaTax_Model_SoapApi extends Aoe_AvaTax_Model_Api
         $request->setDocCode($this->limit($this->getHelper()->getCreditmemoDocCode($creditmemo), 50));
         $request->setCancelCode(AvaTax\CancelCode::$DocVoided);
 
+        Mage::dispatchEvent('aoe_avatax_soapapi_void_tax_for_creditmemo_before', array('request' => $request, 'creditmemo' => $creditmemo));
+
         return $this->callCancelTax($creditmemo->getStore(), $request);
     }
 
@@ -342,6 +356,8 @@ class Aoe_AvaTax_Model_SoapApi extends Aoe_AvaTax_Model_Api
         $request->setDocType(AvaTax\DocumentType::$ReturnInvoice);
         $request->setDocCode($this->limit($this->getHelper()->getCreditmemoDocCode($creditmemo), 50));
         $request->setCancelCode(AvaTax\CancelCode::$DocDeleted);
+
+        Mage::dispatchEvent('aoe_avatax_soapapi_delete_tax_for_creditmemo_before', array('request' => $request, 'creditmemo' => $creditmemo));
 
         return $this->callCancelTax($creditmemo->getStore(), $request);
     }
