@@ -121,6 +121,7 @@ class Aoe_AvaTax_Helper_Soap extends Aoe_AvaTax_Helper_Data
             'BusinessIdentificationNo' => $soapRequest->getBusinessIdentificationNo(),
             'Addresses'                => array(),
             'Lines'                    => array(),
+            'TaxOverride'              => array(),
         );
 
         foreach ($soapRequest->getAddresses() as $soapAddress) {
@@ -153,6 +154,15 @@ class Aoe_AvaTax_Helper_Soap extends Aoe_AvaTax_Helper_Data
                 "Ref1"            => $soapLine->getRef1(),
                 "Ref2"            => $soapLine->getRef2(),
             );
+        }
+
+        if ($soapRequest->getTaxOverride() instanceof AvaTax\TaxOverride) {
+            /** @var AvaTax\TaxOverride $override */
+            $override = $soapRequest->getTaxOverride();
+            $request['TaxOverride']['TaxOverrideType'] = $override->getTaxOverrideType();
+            $request['TaxOverride']['TaxDate'] = $override->getTaxDate();
+            $request['TaxOverride']['TaxAmount'] = $override->getTaxAmount();
+            $request['TaxOverride']['Reason'] = $override->getReason();
         }
 
         if ($isDevMode) {
