@@ -289,6 +289,20 @@ class Aoe_AvaTax_Model_SoapApi extends Aoe_AvaTax_Model_Api
 
         $request->setLines($taxLines);
 
+        // If this credit memo is linked to an invoice, use the invoice date for tax calculation purposes
+        /** @var Mage_Sales_Model_Order_Invoice $invoice */
+        $invoice = $creditmemo->getInvoice();
+        if(!$invoice instanceof Mage_Sales_Model_Order_Invoice && $creditmemo->getInvoiceId()) {
+            $invoice = Mage::getModel('sales/order_invoice')->load($creditmemo->getInvoiceId());
+        }
+        if($invoice instanceof Mage_Sales_Model_Order_Invoice && !$invoice->isObjectNew()) {
+            $override = new AvaTax\TaxOverride();
+            $override->setTaxOverrideType(AvaTax\TaxOverrideType::$TaxDate);
+            $override->setTaxDate($invoice->getCreatedAtDate()->toString('yyyy-MM-dd'));
+            $override->setReason('Refund');
+            $request->setTaxOverride($override);
+        }
+
         // TODO: Handle giftwrapping
 
         $result = $this->callGetTax($store, $request);
