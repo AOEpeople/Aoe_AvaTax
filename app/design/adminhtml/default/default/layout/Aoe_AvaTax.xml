@@ -3,4 +3,29 @@
     <adminhtml_tax_class_product_index>
 
     </adminhtml_tax_class_product_index>
+
+    <adminhtml_avatax_log_index>
+        <reference name="content">
+            <block type="Aoe_AvaTax/Adminhtml_Log" name="avatax_log_list" />
+        </reference>
+    </adminhtml_avatax_log_index>
+
+    <adminhtml_avatax_log_edit>
+        <reference name="menu">
+            <action method="setActive">
+                <menupath>sales/tax/avatax_log</menupath>
+            </action>
+        </reference>
+        <reference name="content">
+            <block type="Aoe_AvaTax/Adminhtml_Log_Edit" name ="avatax_log_edit" />
+        </reference>
+        <reference name="left">
+            <block type="Aoe_AvaTax/Adminhtml_Log_Edit_Tabs" name="avatax_log_tabs"></block>
+        </reference>
+    </adminhtml_avatax_log_edit>
+
+    <adminhtml_avatax_log_grid>
+        <remove name="root"/>
+        <block type="Aoe_AvaTax/Adminhtml_Log_Grid" name="avatax_log_grid" output="toHtml"/>
+    </adminhtml_avatax_log_grid>
 </layout>
