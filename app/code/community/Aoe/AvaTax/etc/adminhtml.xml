@@ -1,4 +1,31 @@
 <?xml version="1.0"?>
 <config>
+    <menu>
+        <sales>
+            <children>
+                <tax>
+                    <children>
+                        <avatax_log translate="title" module="Aoe_AvaTax">
+                            <title>AvaTax Log</title>
+                            <action>adminhtml/avaTax_log/</action>
+                            <sort_order>100</sort_order>
+                        </avatax_log>
+                    </children>
+                </tax>
+            </children>
+        </sales>
+    </menu>
 
+    <acl>
+        <resources>
+            <admin>
+                <children>
+                    <aoe_avatax translate="title">
+                        <title>AOE AvaTax</title>
+                        <sort_order>100</sort_order>
+                    </aoe_avatax>
+                </children>
+            </admin>
+        </resources>
+    </acl>
 </config>
