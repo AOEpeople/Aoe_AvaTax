@@ -88,27 +88,26 @@ class Aoe_AvaTax_Block_Adminhtml_Log_Grid extends Mage_Adminhtml_Block_Widget_Gr
             'type' => 'datetime',
             'filter_index' => 'main_table.created_at'
         ));
-        $this->addColumn('action',
-            array(
-                'header' => Mage::helper('Aoe_AvaTax')->__('Action'),
-                'width' => 100,
-                'type' => 'action',
-                'getter' => 'getId',
-                'actions' => array(
-                    array(
-                        'caption' => Mage::helper('Aoe_AvaTax')->__('Details'),
-                        'url' => array('base' => '*/*/edit'),
-                        'field' => 'id'
-                    )
-                ),
-                'filter' => false,
-                'is_system' => true,
-                'sortable' => false,
-            ));
+        $this->addColumn('action',  array(
+            'header' => Mage::helper('Aoe_AvaTax')->__('Action'),
+            'width' => 100,
+            'type' => 'action',
+            'getter' => 'getId',
+            'actions' => array(
+                array(
+                    'caption' => Mage::helper('Aoe_AvaTax')->__('Details'),
+                    'url' => array('base' => '*/*/edit'),
+                    'field' => 'id'
+                )
+            ),
+            'filter' => false,
+            'is_system' => true,
+            'sortable' => false,
+        ));
         $this->setDefaultSort('created_at');
         $this->setDefaultDir('desc');
         $this->addExportType('*/*/exportCsv', Mage::helper('Aoe_AvaTax')->__('CSV'));
-        $this->addExportType('*/*/exportExcel', Mage::helper('Aoe_AvaTax')->__('Excel'));
+        $this->addExportType('*/*/exportExcel', Mage::helper('Aoe_AvaTax')->__('Excel XML'));
         $this->addExportType('*/*/exportXml', Mage::helper('Aoe_AvaTax')->__('XML'));
         return parent::_prepareColumns();
     }
