@@ -61,6 +61,42 @@ class Aoe_AvaTax_Adminhtml_AvaTax_LogController extends Mage_Adminhtml_Controlle
         $this->_addBreadcrumb($breadcrumbMessage, $breadcrumbMessage)
             ->renderLayout();
     }
+    
+    /**
+     * export as csv - action
+     * @access public
+     * @return void
+     * @author Manish Jain
+     */
+    public function exportCsvAction(){
+        $fileName   = 'avatax_log.csv';
+        $content    = $this->getLayout()->createBlock('Aoe_AvaTax/Adminhtml_Log_Grid')->getCsv();
+        $this->_prepareDownloadResponse($fileName, $content);
+    }
+
+    /**
+     * export as MsExcel - action
+     * @access public
+     * @return void
+     * @author Manish Jain
+     */
+    public function exportExcelAction(){
+        $fileName   = 'avatax_log.xls';
+        $content    = $this->getLayout()->createBlock('Aoe_AvaTax/Adminhtml_Log_Grid')->getExcelFile();
+        $this->_prepareDownloadResponse($fileName, $content);
+    }
+
+    /**
+     * export as xml - action
+     * @access public
+     * @return void
+     * @author Manish Jain
+     */
+    public function exportXmlAction(){
+        $fileName   = 'avatax_log.xml';
+        $content    = $this->getLayout()->createBlock('Aoe_AvaTax/Adminhtml_Log_Grid')->getXml();
+        $this->_prepareDownloadResponse($fileName, $content);
+    }
 
     /**
      * Load AvaTax log from request
