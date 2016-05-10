@@ -129,6 +129,17 @@
             </modules>
         </translate>
     </adminhtml>
+    <admin>
+        <routers>
+            <adminhtml>
+                <args>
+                    <modules>
+                        <Aoe_AvaTax before="Mage_Adminhtml">Aoe_AvaTax_Adminhtml</Aoe_AvaTax>
+                    </modules>
+                </args>
+            </adminhtml>
+        </routers>
+    </admin>
     <default>
         <tax>
             <classes>
